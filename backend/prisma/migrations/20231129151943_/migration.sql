@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE `user` MODIFY `id` INTEGER NOT NULL,
+    ALTER COLUMN `isAdmin` DROP DEFAULT;

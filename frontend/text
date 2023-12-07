@@ -1,0 +1,35 @@
+import React, { useState } from "react";
+
+const Product = () => {
+  const [price, setPrice] = useState(0);
+  const [inputPrice, setInputPrice] = useState("");
+
+  const handleInputChange = (e) => {
+    setInputPrice(e.target.value);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (inputPrice !== "") {
+      setPrice(parseInt(inputPrice));
+      setInputPrice(""); // Reset the input field after updating the price
+    }
+  };
+
+  return (
+    <div>
+      <h2>Product Price: ${price}</h2>
+      <form onSubmit={handleSubmit}>
+        <input
+          type="number"
+          value={inputPrice}
+          onChange={handleInputChange}
+          placeholder="Enter price"
+        />
+        <button type="submit">Set Price</button>
+      </form>
+    </div>
+  );
+};
+
+export default Product;
