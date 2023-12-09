@@ -2,7 +2,8 @@
 const { PrismaClient } = require("@prisma/client");
 
 const prisma = new PrismaClient();
-const cookieToken = require("../cookieToken/cookieToken");
+// const cookieToken = require("../cookieToken/cookieToken");
+const cookieToken = require("../../cookieToken/cookieToken");
 // user signup
 exports.signup = async (req, resp, next) => {
   try {

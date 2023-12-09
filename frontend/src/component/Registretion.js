@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { json, useNavigate } from "react-router-dom";
 
-const SignIN = () => {
+const Signup = () => {
   const [firstname, setFirstname] = useState("");
   const [lastname, setLastname] = useState("");
   const [mobile, setMobile] = useState("");
@@ -81,4 +81,4 @@ const SignIN = () => {
   );
 };
 
-export default SignIN;
+export default Signup;

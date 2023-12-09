@@ -8,40 +8,36 @@ function startTimer(start_time, end_time, date) {
   const startDate = new Date(`${date}T${start_time}`);
   const endDate = new Date(`${date}T${end_time}`);
 
-  // if (endDate < startDate) {
-  //   endDate.setDate(endDate.getDate() + 1);
-  // }
-  let timeDifference = startDate - currentDate;
-
-  // if (timeDifference < 0) {
-  //   const tomorrowStartTime = new Date(startDate);
-  //   tomorrowStartTime.setDate(startDate.getDate() + 1);
-  //   timeDifference = tomorrowStartTime - currentDate;
-  // }
+  let timeDifference = startDate - currentDate; //minisec
 
   const timer = setTimeout(async () => {
     const duration = endDate - startDate;
+
+    const findId = await prisma.auoctionTime.findFirst({
+      orderBy: {
+        id: "desc",
+      },
+    });
 
     setTimeout(async () => {
       clearTimeout(timer);
       const result = await prisma.auoctionTime.update({
         where: {
-          id: 1,
+          id: findId.id,
           userId: 1,
         },
         data: { isAuctionStarted: false },
       });
-      console.log("Timer ended!", result);
     }, duration);
 
     const result = await prisma.auoctionTime.update({
       where: {
-        id: 1,
+        id: findId.id,
         userId: 1,
       },
+
       data: { isAuctionStarted: true },
     });
-    console.log("started!", result);
   }, timeDifference);
 }
 
@@ -84,10 +80,6 @@ exports.getAuction = async (req, res, next) => {
       },
     });
     if (result) {
-      console.log(
-        "🚀 ~ file: auction.js:87 ~ exports.getAuction= ~ result:",
-        result
-      );
       res.json({ st: true, msg: "auction time set success!!!", data: result });
     } else {
       res.json({ st: false, msg: "auction time set unsuccess!!!", data: null });

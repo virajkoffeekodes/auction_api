@@ -36,7 +36,7 @@ const UpdateProduct = () => {
     let result = await fetch(
       `http://localhost:8000/updateProduct/update/${params.id}`,
       {
-        method: "put",
+        method: "PUT",
         body: formData,
       }
     );

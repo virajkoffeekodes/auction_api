@@ -24,34 +24,34 @@ model User {
 }
 
 model Product {
-  id          Int      @id @default(autoincrement())
+  id          Int    @id @default(autoincrement())
   name        String
   description String
-  price       String   @db.VarChar(255)
+  price       String @db.VarChar(255)
   image       String
-  bidder      Bidder[]
-  User        User?    @relation(fields: [userId], references: [id])
-  userId      Int?
+
+  User     User?   @relation(fields: [userId], references: [id])
+  userId   Int?
+  Bidder   Bidder? @relation(fields: [bidderId], references: [id])
+  bidderId Int?
 }
 
 model Bidder {
-  id        Int      @id @default(autoincrement())
+  id        Int       @id @default(autoincrement())
   firstname String
   lastname  String
   mobile    String
   password  String
-  isAdmin   Boolean  @default(false)
-  Product   Product? @relation(fields: [productId], references: [id])
-  productId Int?
+  isAdmin   Boolean   @default(false)
+  product   Product[]
 }
 
 model AuoctionTime {
-  id     Int   @id @default(autoincrement())
-  User   User? @relation(fields: [userId], references: [id])
-  userId Int?
-
+  id               Int      @id @default(autoincrement())
+  User             User?    @relation(fields: [userId], references: [id])
+  userId           Int?
   start_time       String
   end_time         String
   date             String
-  isAuctionStarted Boolean @default(false)
+  isAuctionStarted Boolean? @default(false)
 }

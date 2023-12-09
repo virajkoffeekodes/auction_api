@@ -10,14 +10,16 @@ const {
   deleteproduct,
   deleteProduct,
   bidproduct,
-} = require("../product/poducts");
+} = require("../controllar/product/poducts");
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
+    console.log("🚀 ~ file: productRoutes.js:17 ~ req:", req);
     cb(null, "./uploads");
   },
   filename: function (req, file, cb) {
     const timestamp = Date.now();
+
     const ext = file.originalname;
     cb(null, `${timestamp}${ext}`);
   },
@@ -30,6 +32,7 @@ router.route("/updateProduct/find/:id").get(findProduct);
 router
   .route("/updateProduct/update/:id")
   .put(upload.single("image"), updateProduct);
+
 router.route("/delete/:id").delete(deleteProduct);
 router.route("/productbid/:id").put(bidproduct);
 

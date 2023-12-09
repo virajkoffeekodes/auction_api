@@ -39,8 +39,8 @@ const UserList = () => {
     let result = await fetch("http://localhost:8000/userList", {});
     result = await result.json();
     setUser(result);
-    console.log("🚀 ~ file: userList.js:15 ~ getUser ~ result:", result);
   };
+  console.log(user.data);
   return (
     <div>
       <h1>User List</h1>
@@ -51,6 +51,7 @@ const UserList = () => {
             <th>First Name </th>
             <th>Last Name</th>
             <th>Mobile</th>
+            <th>product</th>
           </tr>
         </thead>
         <tbody>
@@ -60,11 +61,24 @@ const UserList = () => {
               <td>{user.firstname}</td>
               <td>{user.lastname}</td>
               <td>{user.mobile}</td>
+              <td>
+                {user.productlist && user.productlist.length > 0 ? (
+                  <ul>
+                    {user.productlist.map((product) => (
+                      <li key={product.id}>
+                        Name: {product.name}, Description: {product.description}
+                        , Price: {product.price}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  "No products"
+                )}
+              </td>
             </tr>
           ))}
         </tbody>
       </table>
-
       <div>
         <form onSubmit={setAuction}>
           <h4>start time </h4>
