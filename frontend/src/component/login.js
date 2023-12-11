@@ -22,6 +22,7 @@ const Login = () => {
           "Content-Type": "application/json",
         },
       });
+
       result = await result.json();
       if (result.st === true) {
         localStorage.setItem("token", result.token);

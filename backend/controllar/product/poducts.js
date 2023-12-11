@@ -212,11 +212,12 @@ exports.deleteProduct = async (req, res, next) => {
 exports.bidproduct = async (req, resp, next) => {
   try {
     const { id } = req.params;
+    const { price } = req.body;
     const updatedProduct = await prisma.product.update({
       where: {
         id: parseInt(id),
       },
-      data: req.body, // Update the fields based on the request body
+      data: { price: price.toString() }, // Update the fields based on the request body
     });
 
     resp.json(updatedProduct);

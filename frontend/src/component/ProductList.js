@@ -7,8 +7,10 @@ import Countdown from "react-countdown";
 const ProductList = () => {
   const [products, setProducts] = useState("");
   const [auctionData, setAuctionData] = useState({});
-  const [reversetime, setReverseTime] = useState({});
+  const [reversetime, setReverseTime] = useState("");
   const [endReversetime, setEndReverseTime] = useState({});
+  const [displayTime, setDisplayTime] = useState(true);
+  const [display, setDisplay] = useState(false);
 
   // const navigate = useNavigate();
 
@@ -22,50 +24,43 @@ const ProductList = () => {
   function startTimer(start_time, end_time, date) {
     const currentDate = new Date();
     const startDate = new Date(`${date}T${start_time}`);
-    let timeDifference = startDate - currentDate;
-    let count = timeDifference;
+    let count = startDate - currentDate;
     setReverseTime(Math.floor(count));
   }
 
-  function endTimer(start_time, end_time, date) {
-    const startDate = new Date(`${date}T${start_time}`);
+  const endTimer = async (start_time, end_time, date) => {
+    const currentTimeStamp = new Date();
     const endDate = new Date(`${date}T${end_time}`);
-    let duration = endDate - startDate;
-    let endCount = duration;
+    let endCount = endDate - currentTimeStamp;
     setEndReverseTime(Math.floor(endCount));
-  }
+  };
 
   const getAuction = async () => {
     let result = await fetch(`http://localhost:8000/getAuction`, {});
     result = await result.json();
-    console.log("🚀 ~ file: ProductList.js:51 ~ getAuction ~ result:", result);
 
     if (result.st === true) {
-      const { start_time, end_time, date } = result?.data;
-      startTimer(start_time, end_time, date);
-      endTimer(start_time, end_time, date);
+      const { start_time, end_time, date, isCompleted } = result?.data;
+
+      if (!isCompleted) {
+        startTimer(start_time, end_time, date);
+        endTimer(start_time, end_time, date);
+      }
       setAuctionData(result);
     } else {
       alert("something goes wrong!!!");
     }
   };
 
-  // const [herankarechhe, setherankarechhe] = useState(false);
-  // const renderer = ({ hours, minutes, seconds, completed }) => {
-  //   if (completed) {
-  //     return <span>You are good to go!</span>;
-  //   } else {
-  //     return (
-  //       <span>
-  //         <h1>Auction is Starting in</h1>={hours}:{minutes}:{seconds}
-  //       </span>
-  //     );
-  //   }
-  // };
   const renderer = React.useMemo(() => {
     return ({ hours, minutes, seconds, completed }) => {
       if (completed) {
-        return <span>You are good to go!</span>;
+        // setDisplayTime(false);
+        return (
+          <span>
+            <h>You'v good to go!!!</h>
+          </span>
+        );
       } else {
         return (
           <span>
@@ -76,19 +71,6 @@ const ProductList = () => {
     };
   }, []);
 
-  // const endRenderer = React.useMemo(() => {
-  //   ({ hours, minutes, seconds, completed }) => {
-  //     if (completed) {
-  //       return <span>Thank YOU!</span>;
-  //     } else {
-  //       return (
-  //         <span>
-  //           <h1>Auction is end in</h1>={hours}:{minutes}:{seconds}
-  //         </span>
-  //       );
-  //     }
-  //   };
-  // });
   const endRenderer = React.useMemo(() => {
     return ({ hours, minutes, seconds, completed }) => {
       if (completed) {
@@ -108,10 +90,10 @@ const ProductList = () => {
     let key = e.target.value;
     let token = localStorage.getItem("token");
 
-    // if (token.startsWith('"') && token.endsWith('"')) {
-    //   token = token.substring(1, token.length - 1);
-    //   console.log(token);
-    // }
+    if (token.startsWith('"') && token.endsWith('"')) {
+      token = token.substring(1, token.length - 1);
+      console.log(token);
+    }
     let result = await fetch(`http://localhost:8000/search/${key}`, {
       // let result = await fetch("http://localhost:7000/product", {
       headers: {
@@ -136,8 +118,11 @@ const ProductList = () => {
       <h1>ProductList</h1>
       <input type="text" placeholder="Search" onChange={searchHandle} />
 
-      <Countdown date={Date.now() + reversetime} renderer={renderer} />
-      <Countdown date={Date.now() + endReversetime} renderer={endRenderer} />
+      <div>
+        <Countdown date={Date.now() + reversetime} renderer={renderer} />
+
+        <Countdown date={Date.now() + endReversetime} renderer={endRenderer} />
+      </div>
 
       <div>
         {
@@ -157,7 +142,7 @@ const ProductList = () => {
                   <li>Name:{item.name}</li>
                   <li>Description:{item.description}</li>
                   <li>Price:{item.price}</li>
-                  {auctionData.data.isAuctionStarted === true ? (
+                  {auctionData?.data?.isAuctionStarted === true ? (
                     <Link to={"/productbid/" + item.id}>Click for Bid</Link>
                   ) : (
                     "hello"

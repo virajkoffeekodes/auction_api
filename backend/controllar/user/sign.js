@@ -28,7 +28,6 @@ exports.signup = async (req, resp, next) => {
     console.log(error);
   }
 };
-// module.exports = { signup };
 
 //userlogin
 exports.login = async (req, resp, next) => {
@@ -128,4 +127,14 @@ exports.profile = async (req, resp, next) => {
     console.error("Error retrieving user and product data:", error);
     resp.status(500).json({ error: "An error occurred" });
   }
+};
+
+exports.bidder = async (req, resp, next) => {
+  const { id } = req.body;
+  var result = await prisma.user.findFirst({
+    where: {
+      id,
+    },
+  });
+  resp.json(result);
 };

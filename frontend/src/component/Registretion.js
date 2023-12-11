@@ -11,10 +11,6 @@ const Signup = () => {
   useEffect(() => {
     // const auth = localStorage.getItem("user");
     // const userdata = json.parse(auth);
-    console.log(
-      "🚀 ~ file: Registretion.js:14 ~ useEffect ~ userdata:"
-      // userdata
-    );
     // if (auth) {
     //   navigate("/");
     // }
