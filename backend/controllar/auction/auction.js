@@ -11,7 +11,7 @@ function startTimer(start_time, end_time, date) {
   let timeDifference = startDate - currentDate; //minisec
 
   const timer = setTimeout(async () => {
-    const duration = endDate - startDate;
+    const duration = endDate - currentDate;
 
     const findId = await prisma.auoctionTime.findFirst({
       orderBy: {

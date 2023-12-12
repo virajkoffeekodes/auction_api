@@ -9,8 +9,9 @@ const {
   findProduct,
   deleteproduct,
   deleteProduct,
-  bidproduct,
+  updatebid,
 } = require("../controllar/product/poducts");
+const { bidproduct } = require("../controllar/bidder/bidder");
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -35,5 +36,6 @@ router
 
 router.route("/delete/:id").delete(deleteProduct);
 router.route("/productbid/:id").put(bidproduct);
+router.route("/updatebid/:id").put(updatebid);
 
 module.exports = router;

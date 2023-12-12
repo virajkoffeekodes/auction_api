@@ -7,9 +7,9 @@ import Countdown from "react-countdown";
 const ProductList = () => {
   const [products, setProducts] = useState("");
   const [auctionData, setAuctionData] = useState({});
-  const [reversetime, setReverseTime] = useState("");
+  const [reversetime, setReverseTime] = useState({});
   const [endReversetime, setEndReverseTime] = useState({});
-  const [displayTime, setDisplayTime] = useState(true);
+  const [displayTime, setDisplayTime] = useState(false);
   const [display, setDisplay] = useState(false);
 
   // const navigate = useNavigate();
@@ -20,21 +20,6 @@ const ProductList = () => {
     result = await result.json();
     setProducts(result);
   };
-
-  function startTimer(start_time, end_time, date) {
-    const currentDate = new Date();
-    const startDate = new Date(`${date}T${start_time}`);
-    let count = startDate - currentDate;
-    setReverseTime(Math.floor(count));
-  }
-
-  const endTimer = async (start_time, end_time, date) => {
-    const currentTimeStamp = new Date();
-    const endDate = new Date(`${date}T${end_time}`);
-    let endCount = endDate - currentTimeStamp;
-    setEndReverseTime(Math.floor(endCount));
-  };
-
   const getAuction = async () => {
     let result = await fetch(`http://localhost:8000/getAuction`, {});
     result = await result.json();
@@ -52,38 +37,59 @@ const ProductList = () => {
     }
   };
 
-  const renderer = React.useMemo(() => {
-    return ({ hours, minutes, seconds, completed }) => {
-      if (completed) {
-        // setDisplayTime(false);
-        return (
-          <span>
-            <h>You'v good to go!!!</h>
-          </span>
-        );
-      } else {
-        return (
-          <span>
-            <h1>Auction is Starting in</h1>={hours}:{minutes}:{seconds}
-          </span>
-        );
-      }
-    };
-  }, []);
+  function startTimer(start_time, end_time, date) {
+    const currentDate = new Date();
+    const startDate = new Date(`${date}T${start_time}`);
+    let count = startDate - currentDate;
+    setReverseTime(Math.floor(count));
+  }
 
-  const endRenderer = React.useMemo(() => {
-    return ({ hours, minutes, seconds, completed }) => {
-      if (completed) {
-        return <span>Thank YOU!</span>;
-      } else {
-        return (
-          <span>
-            <h1>Auction is end in</h1>={hours}:{minutes}:{seconds}
-          </span>
-        );
-      }
-    };
-  }, []);
+  const endTimer = async (start_time, end_time, date) => {
+    const currentTimeStamp = new Date();
+    // const startDate = new Date(`${date}T${start_time}`);
+    const endDate = new Date(`${date}T${end_time}`);
+    let endCount = endDate - currentTimeStamp;
+    setEndReverseTime(Math.floor(endCount));
+  };
+
+  // const renderer = ({ hours, minutes, seconds, completed }) => {
+  //   useEffect(() => {
+  //     if (completed) {
+  //       setDisplayTime(true);
+  //     }
+  //   }, [completed]);
+
+  //   return (
+  //     <span>
+  //       <h1>Auction is Starting in</h1>
+  //       {hours}:{minutes}:{seconds}
+  //     </span>
+  //   );
+  // };
+  const renderer = ({ hours, minutes, seconds, completed }) => {
+    if (completed) {
+      // setDisplayTime(true);
+    }
+    return (
+      <span>
+        <h1>Auction is Starting in:</h1>
+        {hours}:{minutes}:{seconds}
+      </span>
+    );
+  };
+
+  const endRenderer = ({ hours, minutes, seconds, completed }) => {
+    if (completed) {
+      return <span>Thank YOU!</span>;
+    } else {
+      return (
+        <span>
+          <h1>Auction is end in</h1>
+          {hours}:{minutes}:{seconds}
+        </span>
+      );
+    }
+  };
 
   //for search part
   const searchHandle = async (e) => {
@@ -117,12 +123,15 @@ const ProductList = () => {
     <div className="product-list">
       <h1>ProductList</h1>
       <input type="text" placeholder="Search" onChange={searchHandle} />
-
-      <div>
-        <Countdown date={Date.now() + reversetime} renderer={renderer} />
-
-        <Countdown date={Date.now() + endReversetime} renderer={endRenderer} />
-      </div>
+      {/* {displayTime ? ( */}
+      <Countdown date={Date.now() + endReversetime} renderer={endRenderer} />
+      {/* ) : ( */}
+      <Countdown
+        date={Date.now() + reversetime}
+        renderer={renderer}
+        displayTime={displayTime}
+      />
+      {/* )} */}
 
       <div>
         {

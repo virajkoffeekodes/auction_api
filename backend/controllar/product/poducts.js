@@ -122,7 +122,7 @@ exports.updateProduct = async (req, resp, next) => {
       where: {
         id: parseInt(id),
       },
-      data: { name, price, description, image }, // Update the fields based on the request body
+      data: { name, price, description, image, bidprice }, // Update the fields based on the request body
     });
     resp.json(updatedProduct);
   } catch (error) {
@@ -209,20 +209,21 @@ exports.deleteProduct = async (req, res, next) => {
   }
 };
 
-exports.bidproduct = async (req, resp, next) => {
+exports.updatebid = async (req, resp, next) => {
+  // const { id } = req.params;
   try {
+    const { bidprice } = req.body;
     const { id } = req.params;
-    const { price } = req.body;
-    const updatedProduct = await prisma.product.update({
+    const updatebid = await prisma.product.update({
       where: {
         id: parseInt(id),
       },
-      data: { price: price.toString() }, // Update the fields based on the request body
+      data: {
+        bidprice: bidprice.toString(), // Update the fields based on the request body
+      },
     });
-
-    resp.json(updatedProduct);
+    resp.json(updatebid);
   } catch (error) {
-    console.error("Error updating product:", error);
-    resp.status(500).json({ error: "Internal server error" });
+    console.log("errror::::::::::::::::::::::::::::::::::::::::::", error);
   }
 };
