@@ -227,3 +227,29 @@ exports.updatebid = async (req, resp, next) => {
     console.log("errror::::::::::::::::::::::::::::::::::::::::::", error);
   }
 };
+
+exports.search = async (req, resp, next) => {
+  console.log("mvsrv");
+  let result = await prisma.product.findMany({
+    where: {
+      OR: [
+        {
+          name: {
+            contains: req.params.key,
+          },
+        },
+        {
+          price: {
+            contains: req.params.key,
+          },
+        },
+        {
+          description: {
+            contains: req.params.key,
+          },
+        },
+      ],
+    },
+  });
+  resp.send(result);
+};

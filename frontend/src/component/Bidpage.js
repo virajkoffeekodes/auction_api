@@ -36,7 +36,7 @@ const BidProduct = () => {
     setImage(`${BACKEND_PATH}/${result.image}`);
     setDescription(result.description);
     setNewBidPrice(result.bidprice);
-    // setBidPrice(result.bidprice);
+    setBidPrice(result.bidprice);
   };
 
   const handelUpdate = async (e) => {
@@ -101,7 +101,7 @@ const BidProduct = () => {
         <label>
           BID-PRICE:
           <input
-            value={newbidprice}
+            value={bidprice}
             onChange={(e) => setBidPrice(parseInt(e.target.value))}
             type="number"
             placeholder="Bid-Price"

@@ -10,6 +10,7 @@ const {
   deleteproduct,
   deleteProduct,
   updatebid,
+  search,
 } = require("../controllar/product/poducts");
 const { bidproduct } = require("../controllar/bidder/bidder");
 
@@ -37,5 +38,6 @@ router
 router.route("/delete/:id").delete(deleteProduct);
 router.route("/productbid/:id").put(bidproduct);
 router.route("/updatebid/:id").put(updatebid);
+router.route("/search/:key").get(search);
 
 module.exports = router;

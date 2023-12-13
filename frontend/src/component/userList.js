@@ -44,6 +44,41 @@ const UserList = () => {
   return (
     <div>
       <h1>User List</h1>
+      <div>
+        <form onSubmit={setAuction}>
+          <h4>start time </h4>
+          <input
+            className="inputbox"
+            value={start_time}
+            onChange={(e) => setAuctionStartTime(e.target.value)}
+            type="time"
+            placeholder="Enter start time"
+          />
+          <br />
+          <h4>end time </h4>
+          <input
+            className="inputbox"
+            value={end_time}
+            onChange={(e) => setAuctionEndTime(e.target.value)}
+            type="time"
+            placeholder="Enter End time"
+          />
+          <br />
+          <h4>Date </h4>
+          <input
+            className="inputbox"
+            value={date}
+            onChange={(e) => setAuctionDate(e.target.value)}
+            type="date"
+            placeholder="Enter Auction Date"
+          />
+          <br />
+          <button type="submit" className="singupbtn">
+            set Time
+          </button>
+        </form>
+      </div>
+      <br />
       <table>
         <thead>
           <tr>
@@ -79,38 +114,6 @@ const UserList = () => {
           ))}
         </tbody>
       </table>
-      <div>
-        <form onSubmit={setAuction}>
-          <h4>start time </h4>
-          <input
-            className="inputbox"
-            value={start_time}
-            onChange={(e) => setAuctionStartTime(e.target.value)}
-            type="time"
-            placeholder="Enter start time"
-          />
-          <h4>end time </h4>
-          <input
-            className="inputbox"
-            value={end_time}
-            onChange={(e) => setAuctionEndTime(e.target.value)}
-            type="time"
-            placeholder="Enter End time"
-          />
-          <h4>Date </h4>
-          <input
-            className="inputbox"
-            value={date}
-            onChange={(e) => setAuctionDate(e.target.value)}
-            type="date"
-            placeholder="Enter Auction Date"
-          />
-          <br />
-          <button type="submit" className="singupbtn">
-            set Time
-          </button>
-        </form>
-      </div>
     </div>
   );
 };

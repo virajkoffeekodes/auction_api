@@ -41,6 +41,10 @@ const ProductList = () => {
     const currentDate = new Date();
     const startDate = new Date(`${date}T${start_time}`);
     let count = startDate - currentDate;
+    console.log(
+      "🚀 ~ file: ProductList.js:44 ~ startTimer ~ startDate:",
+      startDate
+    );
     setReverseTime(Math.floor(count));
   }
 
@@ -68,6 +72,7 @@ const ProductList = () => {
   // };
   const renderer = ({ hours, minutes, seconds, completed }) => {
     if (completed) {
+      return <span>You are good to go!</span>;
       // setDisplayTime(true);
     }
     return (
@@ -93,19 +98,8 @@ const ProductList = () => {
 
   //for search part
   const searchHandle = async (e) => {
-    let key = e.target.value;
-    let token = localStorage.getItem("token");
-
-    if (token.startsWith('"') && token.endsWith('"')) {
-      token = token.substring(1, token.length - 1);
-      console.log(token);
-    }
-    let result = await fetch(`http://localhost:8000/search/${key}`, {
-      // let result = await fetch("http://localhost:7000/product", {
-      headers: {
-        Authorization: token,
-      },
-    });
+    const key = e.target.value;
+    let result = await fetch(`http://localhost:8000/search/${key}`, {});
     if (!key) {
       getProducts();
     }
@@ -123,15 +117,12 @@ const ProductList = () => {
     <div className="product-list">
       <h1>ProductList</h1>
       <input type="text" placeholder="Search" onChange={searchHandle} />
-      {/* {displayTime ? ( */}
-      <Countdown date={Date.now() + endReversetime} renderer={endRenderer} />
-      {/* ) : ( */}
       <Countdown
         date={Date.now() + reversetime}
         renderer={renderer}
         displayTime={displayTime}
       />
-      {/* )} */}
+      <Countdown date={Date.now() + endReversetime} renderer={endRenderer} />
 
       <div>
         {

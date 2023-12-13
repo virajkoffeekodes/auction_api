@@ -7,7 +7,9 @@ const cookieToken = require("../../cookieToken/cookieToken");
 // user signup
 exports.signup = async (req, resp, next) => {
   try {
-    const { id, firstname, lastname, mobile, password, isAdmin } = req.body;
+    const { firstname, lastname, mobile, password, confirm_password } =
+      req.body.data;
+    console.log("req.body:", req.body);
 
     const user = await prisma.user.create({
       data: {
@@ -15,7 +17,8 @@ exports.signup = async (req, resp, next) => {
         lastname,
         mobile,
         password,
-        isAdmin: isAdmin === "true",
+        confirm_password,
+        isAdmin: false,
       },
     });
     if (user) {

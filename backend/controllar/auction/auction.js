@@ -44,6 +44,10 @@ function startTimer(start_time, end_time, date) {
 exports.auction = async (req, res, next) => {
   try {
     const { start_time, end_time, date } = req.body;
+    console.log(
+      "🚀 ~ file: auction.js:47 ~ exports.auction= ~ req.bod:",
+      req.body
+    );
 
     const result = await prisma.auoctionTime.create({
       data: {
@@ -75,6 +79,7 @@ exports.getAuction = async (req, res, next) => {
         id: "desc",
       },
     });
+    // console.log("🚀82~exports.getAuction=result:",result);
     if (result) {
       res.json({ st: true, msg: "auction time set success!!!", data: result });
     } else {
