@@ -1,3 +1,4 @@
+import axios from "axios";
 import React, { useEffect, useState } from "react";
 
 const UserList = () => {
@@ -15,18 +16,22 @@ const UserList = () => {
         end_time,
         date,
       };
-      let result = await fetch("http://localhost:8000/auction", {
-        method: "POST",
-        body: JSON.stringify(data),
-        headers: {
-          "Content-Type": "application/json",
-        },
+      let result = await axios.post("http://localhost:8000/auction", {
+        data,
+        start_time,
+        end_time,
+        date,
+        // method: "POST",
+        // body: JSON.stringify(data),
+        // headers: {
+        //   "Content-Type": "application/json",
+        // },
       });
-      result = await result.json();
-      alert(result.msg);
-      console.log("🚀 ~ file: userList.js:14 ~ setAuction ~ result:", result);
+      // result = await result.json();
+      alert(result.data.msg);
+      // console.log("🚀 ~ file: userList.js:14 ~ setAuction ~ result:", result);
     } catch (error) {
-      console.log("🚀 ~ file: userList.js:15 ~ setAuction ~ error:", error);
+      console.log(" error:", error);
     }
   };
 
@@ -36,11 +41,12 @@ const UserList = () => {
 
   //for getting the data from database
   const getUser = async () => {
-    let result = await fetch("http://localhost:8000/userList", {});
-    result = await result.json();
-    setUser(result);
+    let result = await axios.get("http://localhost:8000/userList", {});
+    // console.log("🚀 ~ file: userList.js:42 ~ getUser ~ result:", result);
+    // result = await result.json();
+    setUser(result.data);
   };
-  console.log(user.data);
+  // console.log(user.data);
   return (
     <div>
       <h1>User List</h1>

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import BACKEND_PATH from "../env";
+import axios from "axios";
 
 const MyProducts = () => {
   const [user, setUser] = useState([]);
@@ -8,20 +9,20 @@ const MyProducts = () => {
   const params = useParams();
 
   const getUser = async () => {
-    let result = await fetch(
+    let result = await axios.get(
       `http://localhost:8000/profile/find/${params.id}`,
       {}
     );
-    result = await result.json();
-    setUser(result);
+    // result = await result.json();
+    setUser(result.data);
   };
 
   const deleteproduct = async (id) => {
     console.log(id);
-    let result = await fetch(`http://localhost:8000/delete/${id}`, {
-      method: "Delete",
+    let result = await axios.delete(`http://localhost:8000/delete/${id}`, {
+      // method: "Delete",
     });
-    result = await result.json();
+    // result = await result.json();
     window.location.reload();
   };
 

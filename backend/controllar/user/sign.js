@@ -1,5 +1,6 @@
 // const prisma = require("../prisma/index");
 const { PrismaClient } = require("@prisma/client");
+const JSONparse = require("jsonparse");
 
 const prisma = new PrismaClient();
 // const cookieToken = require("../cookieToken/cookieToken");
@@ -9,7 +10,6 @@ exports.signup = async (req, resp, next) => {
   try {
     const { firstname, lastname, mobile, password, confirm_password } =
       req.body.data;
-    console.log("req.body:", req.body);
 
     const user = await prisma.user.create({
       data: {
@@ -17,16 +17,15 @@ exports.signup = async (req, resp, next) => {
         lastname,
         mobile,
         password,
-        confirm_password,
         isAdmin: false,
       },
     });
+    // console.log("🚀 ~ file: sign.js:24 ~ exports.signup= ~ user:", user);
     if (user) {
-      resp.send({ user, st: true, msg: "user registaration successfully" });
+      resp.json({ user, st: true, msg: "user registaration successfully" });
     } else {
-      resp.send({ st: true, msg: "user registaration unsuccesss" });
+      resp.json({ st: true, msg: "user registaration unsuccesss" });
     }
-    resp.send(user);
   } catch (error) {
     console.log(error);
   }
@@ -34,12 +33,16 @@ exports.signup = async (req, resp, next) => {
 
 //userlogin
 exports.login = async (req, resp, next) => {
-  const { mobile, password } = req.body;
+  const { mobile } = req.body.values;
+  console.log(
+    "🚀 ~ file: sign.js:39 ~ exports.login= ~ mobile:",
+    mobile.toString()
+  );
+
   try {
     const isUser = await prisma.user.findFirst({
       where: {
-        mobile,
-        password,
+        mobile: mobile.toString(),
       },
     });
     if (isUser) {

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { json, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import axios from "axios";
 
 const initialValues = {
   firstname: "",
@@ -29,28 +30,19 @@ const Signup = () => {
       initialValues: initialValues,
       validationSchema: signUpSchema,
       onSubmit: async (values) => {
-        values.mobile = JSON.stringify(values.mobile);
-
         const data = {
           firstname: values.firstname,
           lastname: values.lastname,
-          mobile: values.mobile,
+          mobile: values.mobile.toString(),
           password: values.password,
-          confirm_password: values.confirm_password,
+          confirm_password: values.confirm_password.toString(),
         };
         console.log(data);
-        let result = await fetch("http://localhost:8000/signup", {
-          method: "POST",
-          body: JSON.stringify({
-            data,
-          }),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-        result = await result.json();
-        console.log(result);
-        localStorage.setItem("user", JSON.stringify(result.result));
+        let result = await axios.post("http://localhost:8000/signup", { data });
+
+        // result = await result.json();
+        console.log(result.data, "result");
+        localStorage.setItem("user", JSON.stringify(result.data.user));
         if (result) {
           navigate("/login");
         }

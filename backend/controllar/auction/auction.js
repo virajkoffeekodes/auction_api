@@ -13,6 +13,7 @@ function startTimer(start_time, end_time, date) {
   const timer = setTimeout(async () => {
     const duration = endDate - currentDate;
 
+    // console.log("🚀 ~ file: auction.js:32 ~ timer ~ duration:", duration);
     const findId = await prisma.auoctionTime.findFirst({
       orderBy: {
         id: "desc",
@@ -44,10 +45,6 @@ function startTimer(start_time, end_time, date) {
 exports.auction = async (req, res, next) => {
   try {
     const { start_time, end_time, date } = req.body;
-    console.log(
-      "🚀 ~ file: auction.js:47 ~ exports.auction= ~ req.bod:",
-      req.body
-    );
 
     const result = await prisma.auoctionTime.create({
       data: {

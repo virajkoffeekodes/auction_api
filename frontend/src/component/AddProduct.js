@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const AddProduct = () => {
   const [name, setName] = useState("");
@@ -23,13 +24,12 @@ const AddProduct = () => {
     formData.append("description", description); // Append the file object directly
 
     try {
-      let result = await fetch("http://localhost:8000/addProduct", {
-        method: "POST",
-        body: formData, // Use formData directly as the body
-        // No need to set Content-Type, browser will set as 'multipart/form-data'
-      });
+      let result = await axios.post(
+        "http://localhost:8000/addProduct",
+        formData
+      );
 
-      console.log("Result:", result);
+      console.log("Result:", result.data);
     } catch (error) {
       console.error("Error:", error);
     }

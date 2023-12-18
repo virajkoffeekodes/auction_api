@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
+import axios from "axios";
 
 const UpdateProduct = () => {
   const [name, setName] = useState("");
@@ -7,20 +8,19 @@ const UpdateProduct = () => {
   const [description, setDescription] = useState("");
   const [image, setImage] = useState();
   const params = useParams();
-  const navigate = useNavigate();
 
   useEffect(() => {
     getproduct();
   }, []);
 
   const getproduct = async () => {
-    let result = await fetch(
+    let result = await axios.get(
       `http://localhost:8000/updateProduct/find/${params.id}`
     );
-    result = await result.json();
-    setName(result.name);
-    setPrice(result.price);
-    setDescription(result.description);
+    // result = await result.json();
+    setName(result.data.name);
+    setPrice(result.data.price);
+    setDescription(result.data.description);
   };
 
   const handelUpdate = async (e) => {
@@ -30,19 +30,17 @@ const UpdateProduct = () => {
     formData.append("name", name);
     formData.append("image", image); // Append the file object directly
     formData.append("price", price); // Append the file object directly
-
     formData.append("description", description);
+    formData.append("id", params.id);
+
     // console.log(name, price, description, image);
-    let result = await fetch(
-      `http://localhost:8000/updateProduct/update/${params.id}`,
-      {
-        method: "PUT",
-        body: formData,
-      }
+    let result = await axios.put(
+      `http://localhost:8000/updateProduct/update`,
+      formData
     );
-    result = await result.json();
-    console.log(result);
-    navigate("/");
+    // result = await result.json();
+    console.log(result.data);
+    // navigate("/");
     // window.location.reload();
   };
 

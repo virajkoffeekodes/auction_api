@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import axios from "axios";
 
 const initialValues = {
   mobile: "",
@@ -23,32 +24,37 @@ const Login = () => {
       onSubmit: async (values) => {
         console.log(values);
 
-        let result = await fetch("http://localhost:8000/login", {
-          method: "POST",
-          body: JSON.stringify({ values }),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+        const headers = {
+          "Content-Type": "application/json",
+        };
 
-        result = await result.json();
-        if (result.st === true) {
-          localStorage.setItem("token", result.token);
+        let result = await axios.post(
+          "http://localhost:8000/login",
+          { values: { mobile: values.mobile } },
+          {
+            headers,
+          }
+        );
+
+        // result = await result.json();
+        console.log(result);
+        if (result.data.st === true) {
+          localStorage.setItem("token", result.data.token);
           console.log(
             "🚀 ~ file: login.js:29 ~ handleLogin ~ token:",
-            result.token
+            result.data.token
           );
 
-          if (result.user.isAdmin === false) {
-            localStorage.setItem("user", JSON.stringify(result.user)); //store the data
-            localStorage.setItem("userId", JSON.stringify(result.user.id)); //store the data
+          if (result.data.user.isAdmin === false) {
+            localStorage.setItem("user", JSON.stringify(result.data.user)); //store the data
+            localStorage.setItem("userId", JSON.stringify(result.data.user.id)); //store the data
             localStorage.setItem("token", JSON.stringify(result.auth));
 
             navigate("/"); //for user
             window.location.reload();
           } else {
-            localStorage.setItem("user", JSON.stringify(result.user)); //store the data
-            localStorage.setItem("token", JSON.stringify(result.auth));
+            localStorage.setItem("user", JSON.stringify(result.data.user)); //store the data
+            localStorage.setItem("token", JSON.stringify(result.data.token));
             navigate("/userlist"); // for admin
             window.location.reload();
           }

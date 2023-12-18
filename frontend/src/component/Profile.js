@@ -1,3 +1,4 @@
+import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
@@ -6,12 +7,12 @@ const Profile = () => {
   const params = useParams();
 
   const getUser = async () => {
-    let result = await fetch(
+    let result = await axios.get(
       `http://localhost:8000/profile/find/${params.id}`,
       {}
     );
-    result = await result.json();
-    setUser(result);
+    // result = await result.json();
+    setUser(result.data);
   };
 
   useEffect(() => {

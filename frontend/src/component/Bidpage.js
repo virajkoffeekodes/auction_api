@@ -1,20 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import BACKEND_PATH from "../env";
+import axios from "axios";
 
 const BidProduct = () => {
   const [name, setName] = useState("");
   const [price, setPrice] = useState(0);
   const [bidprice, setBidPrice] = useState(0);
   const [newbidprice, setNewBidPrice] = useState(0);
-  console.log(
-    "🚀 ~ file: Bidpage.js:10 ~ BidProduct ~ newbidprice:",
-    newbidprice
-  );
-
   const [description, setDescription] = useState("");
   const [image, setImage] = useState();
-  const [fetchedPrice, setFetchedPrice] = useState("");
+  const [fetchedPrice, setFetchedPrice] = useState(0);
 
   const params = useParams();
   const navigate = useNavigate();
@@ -24,19 +20,19 @@ const BidProduct = () => {
   }, []);
 
   const getproduct = async () => {
-    let result = await fetch(
+    let result = await axios.get(
       `http://localhost:8000/updateProduct/find/${params.id}`
     );
-    result = await result.json();
+    // result = await result.json();
     console.log("🚀 ~ file: Bidpage.js:25 ~ getproduct ~ result:", result);
 
-    setName(result.name);
-    setPrice(result.price);
-    setFetchedPrice(result.price);
-    setImage(`${BACKEND_PATH}/${result.image}`);
-    setDescription(result.description);
-    setNewBidPrice(result.bidprice);
-    setBidPrice(result.bidprice);
+    setName(result.data.name);
+    setPrice(result.data.price);
+    setFetchedPrice(result.data.price);
+    setImage(`${BACKEND_PATH}/${result.data.image}`);
+    setDescription(result.data.description);
+    setNewBidPrice(result.data.bidprice);
+    setBidPrice(result.data.bidprice);
   };
 
   const handelUpdate = async (e) => {
@@ -52,27 +48,33 @@ const BidProduct = () => {
 
     const bidderId = user.id;
     console.log(newbidprice, "fsfdsd");
-    let updatebid = await fetch(
+    let updatebid = await axios.put(
       `http://localhost:8000/updatebid/${params.id}`,
       {
-        method: "put",
-        headers: {
-          "content-Type": "application/json",
-        },
-        body: JSON.stringify({ bidprice }),
+        bidprice,
+        // method: "put",
+        // headers: {
+        //   "content-Type": "application/json",
+        // },
+        // body: JSON.stringify({ bidprice }),
       }
     );
-    updatebid = await updatebid.json();
+    // updatebid = await updatebid.json();
 
     // console.log(updatebid, "update bid");
-    let result = await fetch(`http://localhost:8000/productbid/${params.id}`, {
-      method: "put",
-      body: JSON.stringify({ bidprice, bidderId }),
-      headers: {
-        "content-Type": "application/json",
-      },
-    });
-    result = await result.json();
+    let result = await axios.put(
+      `http://localhost:8000/productbid/${params.id}`,
+      {
+        // method: "put",
+        // body: JSON.stringify({ bidprice, bidderId }),
+        // headers: {
+        //   "content-Type": "application/json",
+        // },
+        bidprice,
+        bidderId,
+      }
+    );
+    // result = await result.json();
     console.log(result, "kwhkagkag");
     navigate("/");
   };
@@ -96,7 +98,9 @@ const BidProduct = () => {
         <br />
         <label>PRICE:{price}</label>
         <br />
-        <label>BID-PRICE:{newbidprice}</label>
+        <label>
+          BID-PRICE:{bidprice === 0 || !bidprice ? price : newbidprice}
+        </label>
         <br />
         <label>
           BID-PRICE:
@@ -108,7 +112,7 @@ const BidProduct = () => {
           />
         </label>
         <br />
-        {parseInt(bidprice) > parseInt(newbidprice) ? (
+        {bidprice > newbidprice ? (
           <button onClick={(e) => handelUpdate(e)}>Submit</button>
         ) : (
           "enter price gretter then BID-PRICE"

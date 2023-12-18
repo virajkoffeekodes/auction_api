@@ -11,18 +11,17 @@ datasource db {
 }
 
 model User {
-  id               Int            @id @default(autoincrement())
-  firstname        String
-  lastname         String
-  mobile           String
-  password         String
-  confirm_password String
-  isAdmin          Boolean        @default(false)
-  produts          Product[]
-  AuoctionTime     AuoctionTime[]
+  id           Int            @id @default(autoincrement())
+  firstname    String
+  lastname     String
+  mobile       String
+  password     String
+  isAdmin      Boolean        @default(false)
+  produts      Product[]
+  AuoctionTime AuoctionTime[]
   // Product   Product? @relation(fields: [productId], references: [id])
   // productId Int?
-  Bidder           Bidder[]
+  Bidder       Bidder[]
 }
 
 model Product {

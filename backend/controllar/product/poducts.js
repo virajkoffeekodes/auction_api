@@ -5,9 +5,12 @@ var app = express();
 const fs = require("fs");
 const path = require("path");
 const { stringify } = require("querystring");
-
 const prisma = new PrismaClient();
+
 exports.addProduct = async (req, res, next) => {
+  if (!req.file) {
+    return res.status(400).send("No files were uploaded.");
+  }
   const image = req.file.filename;
 
   try {
@@ -25,13 +28,13 @@ exports.addProduct = async (req, res, next) => {
       },
     });
 
-    console.log("Product added:", addProduct);
-    // const users = await prisma.User.findMany({});
-
-    res.send(addProduct);
-    res.send("File uploaded successfully");
+    if (addProduct) {
+      res.json({ data: addProduct, msg: "File uploaded successfully" });
+    } else {
+      res.json({ data: {}, msg: "File uploaded unsuccessfully" });
+    }
   } catch (error) {
-    console.log(error);
+    res.json({ data: {}, msg: error });
   }
 };
 
@@ -62,69 +65,91 @@ exports.findProduct = async (req, resp, next) => {
 };
 
 exports.updateProduct = async (req, resp, next) => {
-  const image = req.file.filename;
+  const { name, price, description, id } = req.body;
 
   try {
-    const { name, price, description } = req.body;
-    const { id } = req.params;
-    const product = await prisma.product.findFirst({
-      where: {
-        id: parseInt(req.params.id),
-      },
-    });
-    const currentFileDir = __dirname;
-    // Find the root directory by navigating upwards
-    const rootDir = path.resolve(currentFileDir, "../");
-    const uploadFolder = `${rootDir}/uploads`;
+    const image = req?.file?.filename;
 
-    fs.readdir(uploadFolder, (err, files) => {
-      if (err) {
-        console.error("Error reading directory:", err);
-        return;
-      }
-      const imageFiles = files.filter((file) => {
-        const extension = path.extname(file).toLowerCase();
-        return (
-          extension === ".jpg" ||
-          extension === ".jpeg" ||
-          extension === ".png" ||
-          extension === ".gif"
-        );
+    var updatedProduct;
+
+    if (image) {
+      const product = await prisma.product.findFirst({
+        where: {
+          id: parseInt(id),
+        },
       });
-      // console.log("🚀 imageFiles:", imageFiles);
+      const currentFileDir = __dirname;
+      const rootDir = path.resolve(currentFileDir, "../../");
+      const uploadFolder = `${rootDir}/uploads`;
 
-      const foundImage = imageFiles.find((file) => file === product.image);
-      // console.log("🚀  foundImage:", foundImage);
+      fs.readdir(uploadFolder, (err, files) => {
+        if (err) {
+          console.error("Error reading directory:", err);
+          return;
+        }
+        const imageFiles = files.filter((file) => {
+          const extension = path.extname(file).toLowerCase();
+          return (
+            extension === ".jpg" ||
+            extension === ".jpeg" ||
+            extension === ".png" ||
+            extension === ".gif"
+          );
+        });
 
-      if (foundImage) {
-        const filePath = path.join(uploadFolder, foundImage);
+        const foundImage = imageFiles.find((file) => file === product.image);
 
-        // Check if the file exists
-        fs.access(filePath, fs.constants.F_OK, (err) => {
-          if (err) {
-            console.error("File does not exist:", err);
-            return;
-          }
+        if (foundImage) {
+          const filePath = path.join(uploadFolder, foundImage);
 
-          // File exists, proceed with deletion
-          fs.unlink(filePath, (err) => {
+          // Check if the file exists
+          fs.access(filePath, fs.constants.F_OK, (err) => {
             if (err) {
-              console.error("Error deleting file:", err);
+              console.error("File does not exist:", err);
               return;
             }
-            console.log(`File '${foundImage}' deleted successfully.`);
-          });
-        });
-      }
-    });
 
-    const updatedProduct = await prisma.product.update({
-      where: {
-        id: parseInt(id),
-      },
-      data: { name, price, description, image, bidprice }, // Update the fields based on the request body
-    });
-    resp.json(updatedProduct);
+            // File exists, proceed with deletion
+            fs.unlink(filePath, async (err) => {
+              if (err) {
+                console.error("Error deleting file:", err);
+                return;
+              }
+              updatedProduct = await prisma.product.updateMany({
+                where: {
+                  id: parseInt(id),
+                },
+                data: { name, price, description, image }, // Update the fields based on the request body
+              });
+              if (updatedProduct) {
+                resp.json({
+                  data: updatedProduct,
+                  msg: "Product Updated successfully",
+                });
+              } else {
+                resp.json({ data: {}, msg: "Product Updated unsuccessfully" });
+              }
+            });
+          });
+        }
+      });
+    } else {
+      updatedProduct = await prisma.product.updateMany({
+        where: {
+          id: parseInt(id),
+        },
+        data: { name, price, description }, // Update the fields based on the request body
+      });
+
+      if (updatedProduct) {
+        resp.json({
+          data: updatedProduct,
+          msg: "Product Updated successfully",
+        });
+      } else {
+        resp.json({ data: {}, msg: "Product Updated unsuccessfully" });
+      }
+    }
   } catch (error) {
     console.error("Error updating product:", error);
     resp.status(500).json({ error: "Internal server error" });
@@ -213,6 +238,7 @@ exports.updatebid = async (req, resp, next) => {
   // const { id } = req.params;
   try {
     const { bidprice } = req.body;
+    console.log("🚀 ~ ", bidprice);
     const { id } = req.params;
     const updatebid = await prisma.product.update({
       where: {
