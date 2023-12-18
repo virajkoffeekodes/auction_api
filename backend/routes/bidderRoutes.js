@@ -9,5 +9,5 @@ const {
 
 router.route("/productbid/:id").put(bidproduct);
 router.route("/highestbidder/:id").get(highestbidder);
-router.route("/allbidder").get(allbidder);
+router.route("/allbidder/:id").get(allbidder);
 module.exports = router;

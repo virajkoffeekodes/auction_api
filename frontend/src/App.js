@@ -13,6 +13,7 @@ import Bidpage from "./component/Bidpage";
 import MyProducts from "./component/MyProducts";
 // import Logout from "./component/logout";
 import "../src/App.css";
+import Bidderinfo from "./component/Bidderinfo";
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
             <Route path="/myproducts/:id" element={<MyProducts />} />
             <Route path="/userlist" element={<UserList />} />
             <Route path="/productbid/:id" element={<Bidpage />} />
+            <Route path="/allbidder/:id" element={<Bidderinfo />} />
           </Route>
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Registretion />} />

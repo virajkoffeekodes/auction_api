@@ -10,7 +10,7 @@ const BidProduct = () => {
   const [newbidprice, setNewBidPrice] = useState(0);
   const [description, setDescription] = useState("");
   const [image, setImage] = useState();
-  const [fetchedPrice, setFetchedPrice] = useState(0);
+  // const [fetchedPrice, setFetchedPrice] = useState(0);
 
   const params = useParams();
   const navigate = useNavigate();
@@ -28,7 +28,7 @@ const BidProduct = () => {
 
     setName(result.data.name);
     setPrice(result.data.price);
-    setFetchedPrice(result.data.price);
+    // setFetchedPrice(result.data.price);
     setImage(`${BACKEND_PATH}/${result.data.image}`);
     setDescription(result.data.description);
     setNewBidPrice(result.data.bidprice);
@@ -112,7 +112,9 @@ const BidProduct = () => {
           />
         </label>
         <br />
-        {bidprice > newbidprice ? (
+        {!bidprice ? bidprice > price : bidprice > newbidprice}
+
+        {bidprice > newbidprice && bidprice > price ? (
           <button onClick={(e) => handelUpdate(e)}>Submit</button>
         ) : (
           "enter price gretter then BID-PRICE"

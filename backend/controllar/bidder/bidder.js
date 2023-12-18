@@ -29,14 +29,15 @@ exports.bidproduct = async (req, resp, next) => {
 
 // finding the highest bidder
 exports.highestbidder = async (req, resp, next) => {
-  const { productId } = req.params.id;
+  const product = parseInt(req.params.id);
 
   try {
     let result = await prisma.bidder.findMany({
       where: {
-        productId,
+        productId: product,
       },
     });
+    console.log(" result:", result);
     // resp.json(results);
 
     if (result && result.length > 0) {
@@ -55,6 +56,10 @@ exports.highestbidder = async (req, resp, next) => {
           biddingPrice: highestBid,
         },
       });
+      // console.log(
+      //   "🚀 ~ file: bidder.js:58 ~ exports.highestbidder= ~ userid:",
+      //   userid
+      // );
       // resp.json({ userid });
       if (userid) {
         const userId = userid.userId;
@@ -64,6 +69,10 @@ exports.highestbidder = async (req, resp, next) => {
           },
         });
         resp.json(info);
+        console.log(
+          "🚀 ~ file: bidder.js:67 ~ exports.highestbidder= ~ info:",
+          info
+        );
       }
     } else {
       resp.json({ message: "No results found" });
@@ -76,17 +85,25 @@ exports.highestbidder = async (req, resp, next) => {
 
 //get all user for a product
 exports.allbidder = async (req, resp, next) => {
+  const id = parseInt(req.params.id);
+  console.log("hello", id);
   try {
+    let product = await prisma.product.findFirst({
+      where: {
+        id,
+      },
+    });
+
     let results = await prisma.bidder.findMany({
       where: {
-        productId: 50,
+        productId: product.id,
       },
     });
 
     if (results.length > 0) {
       const uniqueUserIds = [...new Set(results.map((item) => item.userId))];
 
-      console.log(uniqueUserIds);
+      // console.log(uniqueUserIds);
 
       let users = [];
 
@@ -95,6 +112,10 @@ exports.allbidder = async (req, resp, next) => {
           where: {
             id: userId,
           },
+          select: {
+            firstname: true,
+            lastname: true,
+          },
         });
 
         if (user) {
@@ -102,7 +123,7 @@ exports.allbidder = async (req, resp, next) => {
         }
       }
 
-      console.log(users);
+      // console.log(users);
       resp.json(users);
     } else {
       resp.json({ message: "No results found" });

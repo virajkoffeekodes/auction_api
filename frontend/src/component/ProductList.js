@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 // import { Link } from "react-router-dom";
 import BACKEND_PATH from "../env";
-import { Link } from "react-router-dom";
+import { Link, useParams, useSearchParams } from "react-router-dom";
 import Countdown from "react-countdown";
 import axios from "axios";
 
@@ -11,8 +11,10 @@ const ProductList = () => {
   const [reversetime, setReverseTime] = useState({});
   const [endReversetime, setEndReverseTime] = useState({});
   // const [displayTime, setDisplayTime] = useState(false);
+  const [modal, setmodal] = useState(false);
+  const [allBidder, setAllBidder] = useState(false);
   const [display, setDisplay] = useState(true);
-
+  const params = useSearchParams();
   // const navigate = useNavigate();
 
   //for getting the data from database
@@ -23,7 +25,7 @@ const ProductList = () => {
   const getAuction = async () => {
     let result = await axios.get(`http://localhost:8000/getAuction`, {});
     // result = await result.json();
-    console.log("🚀 ~ file: ProductList.js:26 ~ getAuction ~ result:", result);
+    // console.log("🚀 ~ file: ProductList.js:26 ~ getAuction ~ result:", result);
 
     if (result.data.st === true) {
       const { start_time, end_time, date, isCompleted } = result?.data?.data;
@@ -97,13 +99,48 @@ const ProductList = () => {
     }
   };
 
+  const modalOpen = async (id) => {
+    setmodal(!modal);
+    if (id) {
+      let result = await axios.get(`http://localhost:8000/allbidder/${id}`);
+      console.log(result.data, "bWDwdf");
+      setAllBidder(result.data);
+      setmodal(true);
+    }
+  };
+
+  const close = () => {
+    setmodal(false);
+  };
+
   useEffect(() => {
     getProducts();
     getAuction();
   }, []);
 
+  console.log("🚀 allBidder:", allBidder);
   return (
     <div className="product-list">
+      {modal && (
+        <div className="modal-product">
+          {allBidder.length > 0
+            ? allBidder.map((item, index) => (
+                <ul>
+                  <li>
+                    Firstname:{item.firstname}
+                    <br />
+                    Lastname:{item.lastname}
+                  </li>
+                  <br />
+                </ul>
+              ))
+            : "No Bidder"}
+          <div>
+            {" "}
+            <button onClick={close}>Done</button>{" "}
+          </div>
+        </div>
+      )}
       <h1>ProductList</h1>
       <input type="text" placeholder="Search" onChange={searchHandle} />
       {display ? (
@@ -143,7 +180,13 @@ const ProductList = () => {
                   {auctionData?.data?.data?.isAuctionStarted === true ? (
                     <Link to={"/productbid/" + item.id}>Click for Bid</Link>
                   ) : (
-                    "Auction not started yet!!"
+                    ("Auction not started yet!!",
+                    (
+                      <button onClick={() => modalOpen(item.id)}>
+                        All Bidder
+                        {/* <Link to={"/allbidder/" + item.id}>All Bidder</Link> */}
+                      </button>
+                    ))
                   )}
                 </li>
               </ul>
