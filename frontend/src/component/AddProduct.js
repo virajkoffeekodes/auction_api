@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -8,6 +8,7 @@ const AddProduct = () => {
   const [price, setPrice] = useState("");
   const [description, setDescription] = useState("");
   const [image, setImage] = useState(null); // Store file object, not file path
+  const [auctionData, setAuctionData] = useState({});
   const navigate = useNavigate();
 
   const productSubmit = async (e) => {
@@ -40,48 +41,63 @@ const AddProduct = () => {
     const file = e.target.files[0];
     setImage(file); // Store the selected file object
   };
+  const getAuction = async () => {
+    let result = await axios.get(`http://localhost:8000/getAuction`, {});
+    // console.log("🚀 ~ file: ProductList.js:26 ~ getAuction ~ result:", result);
+    console.log("🚀 ~ file: AddProduct.js:20 ~ getAuction ~ result:", result);
+
+    setAuctionData(result);
+  };
+
+  useEffect(() => {
+    getAuction();
+  }, []);
 
   return (
     <div>
       <h1>AddProduct</h1>
-      <form onSubmit={productSubmit}>
-        <label>
-          Name:
-          <input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            type="text"
-            placeholder="Name"
-          />
-        </label>
-        <br />
-        <label>
-          PRICE:
-          <input
-            value={price}
-            onChange={(e) => setPrice(e.target.value)}
-            type="number"
-            placeholder="price"
-          />
-        </label>
-        <br />
-        <label>
-          DESCRIPTION:
-          <input
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            type="text"
-            placeholder="description"
-          />
-        </label>
-        <br />
-        <label>
-          Image:
-          <input onChange={handleFileChange} type="file" />
-        </label>
-        <br />
-        <button type="submit">Submit</button>
-      </form>
+      {auctionData?.data?.data?.isAuctionStarted === false ? (
+        <form onSubmit={productSubmit}>
+          <label>
+            Name:
+            <input
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              type="text"
+              placeholder="Name"
+            />
+          </label>
+          <br />
+          <label>
+            PRICE:
+            <input
+              value={price}
+              onChange={(e) => setPrice(e.target.value)}
+              type="number"
+              placeholder="price"
+            />
+          </label>
+          <br />
+          <label>
+            DESCRIPTION:
+            <input
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              type="text"
+              placeholder="description"
+            />
+          </label>
+          <br />
+          <label>
+            Image:
+            <input onChange={handleFileChange} type="file" />
+          </label>
+          <br />
+          <button type="submit">Submit</button>
+        </form>
+      ) : (
+        "Aucion started you can't Add product"
+      )}
     </div>
   );
 };

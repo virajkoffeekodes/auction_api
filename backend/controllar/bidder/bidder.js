@@ -27,6 +27,31 @@ exports.bidproduct = async (req, resp, next) => {
   }
 };
 
+//find the product bid price
+exports.productbidprice = async (req, resp, next) => {
+  const id = req.params.id;
+  let result = await prisma.bidder.findMany({
+    where: {
+      productId: parseInt(id),
+    },
+  });
+  if (result && result.length > 0) {
+    // Extract an array of bidding prices
+    const biddingPrices = result.map((item) => item.biddingPrice);
+
+    // Find the highest bidding price using reduce
+    const highestBid = biddingPrices.reduce(
+      (max, price) => (price > max ? price : max),
+      biddingPrices[0]
+    );
+    if (highestBid) {
+      resp.json({ st: "true", msg: "highest bid ", highestBid });
+    } else {
+      resp.json({ st: "false", msg: " no highest bid found", highestBid: {} });
+    }
+  }
+};
+
 // finding the highest bidder
 exports.highestbidder = async (req, resp, next) => {
   const product = parseInt(req.params.id);
@@ -37,7 +62,7 @@ exports.highestbidder = async (req, resp, next) => {
         productId: product,
       },
     });
-    console.log(" result:", result);
+    // console.log(" result:", result);
     // resp.json(results);
 
     if (result && result.length > 0) {
@@ -69,10 +94,10 @@ exports.highestbidder = async (req, resp, next) => {
           },
         });
         resp.json(info);
-        console.log(
-          "🚀 ~ file: bidder.js:67 ~ exports.highestbidder= ~ info:",
-          info
-        );
+        // console.log(
+        //   "🚀 ~ file: bidder.js:67 ~ exports.highestbidder= ~ info:",
+        //   info
+        // );
       }
     } else {
       resp.json({ message: "No results found" });
@@ -86,7 +111,7 @@ exports.highestbidder = async (req, resp, next) => {
 //get all user for a product
 exports.allbidder = async (req, resp, next) => {
   const id = parseInt(req.params.id);
-  console.log("hello", id);
+  // console.log("hello", id);
   try {
     let product = await prisma.product.findFirst({
       where: {

@@ -1,27 +1,33 @@
 import React, { useEffect, useState } from "react";
 // import { Link } from "react-router-dom";
 import BACKEND_PATH from "../env";
-import { Link, useParams, useSearchParams } from "react-router-dom";
+// import BACKEND_PATH from "../env";
+import { Link } from "react-router-dom";
 import Countdown from "react-countdown";
 import axios from "axios";
+import StripeChekout from "react-stripe-checkout";
 
 const ProductList = () => {
   const [products, setProducts] = useState("");
   const [auctionData, setAuctionData] = useState({});
   const [reversetime, setReverseTime] = useState({});
   const [endReversetime, setEndReverseTime] = useState({});
-  // const [displayTime, setDisplayTime] = useState(false);
+  const [highbider, setHighbider] = useState("");
   const [modal, setmodal] = useState(false);
   const [allBidder, setAllBidder] = useState(false);
   const [display, setDisplay] = useState(true);
-  const params = useSearchParams();
+  const [highBidPrice, setHighBidPrice] = useState({});
+
+  // const params = useSearchParams();
   // const navigate = useNavigate();
 
   //for getting the data from database
+
   const getProducts = async () => {
     let result = await axios.get("http://localhost:8000/productList", {});
     setProducts(result.data);
   };
+
   const getAuction = async () => {
     let result = await axios.get(`http://localhost:8000/getAuction`, {});
     // result = await result.json();
@@ -103,9 +109,20 @@ const ProductList = () => {
     setmodal(!modal);
     if (id) {
       let result = await axios.get(`http://localhost:8000/allbidder/${id}`);
-      console.log(result.data, "bWDwdf");
+      // console.log(result.data, "bWDwdf");
       setAllBidder(result.data);
       setmodal(true);
+
+      let highestbid = await axios.get(
+        `http://localhost:8000/highestbidder/${id}`
+      );
+
+      setHighbider(highestbid);
+
+      let results = await axios.get(
+        `http://localhost:8000/productbidprice/${id}`
+      );
+      setHighBidPrice(results.data);
     }
   };
 
@@ -118,24 +135,60 @@ const ProductList = () => {
     getAuction();
   }, []);
 
-  console.log("🚀 allBidder:", allBidder);
+  // const [products, setProducts] = useState("");
+
+  const makePayment = async (token) => {
+    const body = {
+      token,
+      highBidPrice,
+    };
+    const headers = {
+      "Content-Type": "application/json",
+    };
+    let result = await fetch(`http://localhost:8000/payment`, {
+      method: "post",
+      body: JSON.stringify(body),
+      headers,
+    });
+  };
+
   return (
     <div className="product-list">
       {modal && (
         <div className="modal-product">
-          {allBidder.length > 0
-            ? allBidder.map((item, index) => (
-                <ul>
-                  <li>
-                    Firstname:{item.firstname}
+          <div className="HighestBider">
+            <h1>Highest Bider</h1>
+            <h4>First Name:-{highbider?.data?.firstname}</h4>
+            <h4>Last Name:-{highbider?.data?.lastname}</h4>
+            <h4>mobile No:-{highbider?.data?.mobile}</h4>
+            <div className="paybtn">
+              <StripeChekout
+                stripeKey={process.env.REACT_APP_KEY}
+                token={makePayment}
+                name="Buy Product"
+              >
+                <button> Pay {highBidPrice.highestBid}</button>
+              </StripeChekout>
+            </div>
+          </div>
+
+          <div className="listofbidder">
+            <h2>List of all Bider</h2>
+            {allBidder.length > 0
+              ? allBidder.map((item, index) => (
+                  <ul key={item.id}>
+                    <li>
+                      Firstname:{item.firstname}
+                      <br />
+                      Lastname:{item.lastname}
+                    </li>
                     <br />
-                    Lastname:{item.lastname}
-                  </li>
-                  <br />
-                </ul>
-              ))
-            : "No Bidder"}
-          <div>
+                  </ul>
+                ))
+              : "No Bidder"}
+          </div>
+
+          <div className="btn">
             {" "}
             <button onClick={close}>Done</button>{" "}
           </div>
@@ -180,13 +233,15 @@ const ProductList = () => {
                   {auctionData?.data?.data?.isAuctionStarted === true ? (
                     <Link to={"/productbid/" + item.id}>Click for Bid</Link>
                   ) : (
-                    ("Auction not started yet!!",
-                    (
+                    <>
+                      {"Auction not started yet!! "}
+                      <br />
+
                       <button onClick={() => modalOpen(item.id)}>
                         All Bidder
                         {/* <Link to={"/allbidder/" + item.id}>All Bidder</Link> */}
                       </button>
-                    ))
+                    </>
                   )}
                 </li>
               </ul>

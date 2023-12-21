@@ -34,10 +34,10 @@ exports.signup = async (req, resp, next) => {
 //userlogin
 exports.login = async (req, resp, next) => {
   const { mobile } = req.body.values;
-  console.log(
-    "🚀 ~ file: sign.js:39 ~ exports.login= ~ mobile:",
-    mobile.toString()
-  );
+  // console.log(
+  //   "🚀 ~ file: sign.js:39 ~ exports.login= ~ mobile:",
+  //   mobile.toString()
+  // );
 
   try {
     const isUser = await prisma.user.findFirst({
@@ -108,7 +108,7 @@ exports.profile = async (req, resp, next) => {
   try {
     const { id } = req.params;
 
-    var result = await prisma.user.findFirst({
+    let result = await prisma.user.findFirst({
       where: {
         id: parseInt(id),
       },

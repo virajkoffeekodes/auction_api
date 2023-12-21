@@ -5,8 +5,16 @@ import axios from "axios";
 
 const MyProducts = () => {
   const [user, setUser] = useState([]);
+  const [auctionData, setAuctionData] = useState({});
 
   const params = useParams();
+
+  const getAuction = async () => {
+    let result = await axios.get(`http://localhost:8000/getAuction`, {});
+    // console.log("🚀 ~ file: ProductList.js:26 ~ getAuction ~ result:", result);
+
+    setAuctionData(result);
+  };
 
   const getUser = async () => {
     let result = await axios.get(
@@ -28,6 +36,7 @@ const MyProducts = () => {
 
   useEffect(() => {
     getUser();
+    getAuction();
   }, []);
 
   return (
@@ -49,8 +58,17 @@ const MyProducts = () => {
               <h2>Name={product.name}</h2>
               <p>Description={product.description}</p>
               <p>Price: {product.price}</p>
-              <Link to={"/updateproduct/" + product.id}>update</Link>
-              <button onClick={() => deleteproduct(product.id)}>Delete</button>
+              {auctionData?.data?.data?.isAuctionStarted === false ? (
+                <>
+                  <Link to={"/updateproduct/" + product.id}>update</Link>
+
+                  <button onClick={() => deleteproduct(product.id)}>
+                    Delete
+                  </button>
+                </>
+              ) : (
+                "Aucion started you can't update the product"
+              )}
             </li>
           ))}
         </ul>

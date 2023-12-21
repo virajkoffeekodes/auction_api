@@ -48,7 +48,7 @@ const Login = () => {
           if (result.data.user.isAdmin === false) {
             localStorage.setItem("user", JSON.stringify(result.data.user)); //store the data
             localStorage.setItem("userId", JSON.stringify(result.data.user.id)); //store the data
-            localStorage.setItem("token", JSON.stringify(result.auth));
+            localStorage.setItem("token", JSON.stringify(result.data.token));
 
             navigate("/"); //for user
             window.location.reload();

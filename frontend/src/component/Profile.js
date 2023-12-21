@@ -22,21 +22,46 @@ const Profile = () => {
   return (
     <div>
       <h1>profile</h1>
-      <h1>First Name</h1>={user.result?.firstname}
-      <h1>Last Name</h1>={user.result?.lastname}
-      <h1>mobile No</h1>={user.result?.mobile}
-      <div>
-        <h1>Product List</h1>=
-        <ul>
+      <h1>First Name:</h1>
+      {user.result?.firstname}
+      <h1>Last Name:</h1>
+      {user.result?.lastname}
+      <h1>mobile No:</h1>
+      {user.result?.mobile}
+
+      <table>
+        <thead>
+          <tr>
+            <th colspan="3">
+              <h1>Product List:</h1>
+            </th>
+          </tr>
+          <tr>
+            <th>
+              <h2>Name</h2>
+            </th>
+            <th>
+              <h2>Description</h2>
+            </th>
+            <th>
+              <h2>Price</h2>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {/* <ul> */}
           {user?.result?.productlist?.map((product) => (
-            <li key={product.id}>
-              <h2>Name={product.name}</h2>
-              <p>Description={product.description}</p>
-              <p>Price: {product.price}</p>
-            </li>
+            // <li key={product.id}>
+            <tr key={product.id}>
+              <td>{product.name}</td>
+              <td>{product.description}</td>
+              <td>{product.price}</td>
+            </tr>
+            // </li>
           ))}
-        </ul>
-      </div>
+          {/* </ul> */}
+        </tbody>
+      </table>
     </div>
   );
 };

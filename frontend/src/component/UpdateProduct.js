@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 
 const UpdateProduct = () => {
@@ -8,6 +8,7 @@ const UpdateProduct = () => {
   const [description, setDescription] = useState("");
   const [image, setImage] = useState();
   const params = useParams();
+  const navigate = useNavigate();
 
   useEffect(() => {
     getproduct();
@@ -40,7 +41,7 @@ const UpdateProduct = () => {
     );
     // result = await result.json();
     console.log(result.data);
-    // navigate("/");
+    navigate("/");
     // window.location.reload();
   };
 
