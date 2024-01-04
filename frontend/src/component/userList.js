@@ -3,41 +3,25 @@ import React, { useEffect, useState } from "react";
 
 const UserList = () => {
   const [user, setUser] = useState([]);
-  const [start_time, setAuctionStartTime] = useState("");
-  const [end_time, setAuctionEndTime] = useState("");
-  const [date, setAuctionDate] = useState("");
+  const [modal, setmodal] = useState(false);
+  const [highbider, setHighbider] = useState("");
 
-  const setAuction = async (e) => {
-    e.preventDefault();
+  const modalOpen = async (id) => {
+    setmodal(!modal);
+    if (id) {
+      setmodal(true);
 
-    try {
-      const data = {
-        start_time,
-        end_time,
-        date,
-      };
-      let result = await axios.post("http://localhost:8000/auction", {
-        data,
-        start_time,
-        end_time,
-        date,
-        // method: "POST",
-        // body: JSON.stringify(data),
-        // headers: {
-        //   "Content-Type": "application/json",
-        // },
-      });
-      // result = await result.json();
-      alert(result.data.msg);
-      // console.log("🚀 ~ file: userList.js:14 ~ setAuction ~ result:", result);
-    } catch (error) {
-      console.log(" error:", error);
+      let highestbid = await axios.get(
+        `http://localhost:8000/highestbidder/${id}`
+      );
+
+      setHighbider(highestbid);
     }
   };
 
-  useEffect(() => {
-    getUser();
-  }, []);
+  const close = () => {
+    setmodal(false);
+  };
 
   //for getting the data from database
   const getUser = async () => {
@@ -46,44 +30,29 @@ const UserList = () => {
     // result = await result.json();
     setUser(result.data);
   };
-  // console.log(user.data);
+
+  useEffect(() => {
+    getUser();
+  }, []);
   return (
     <div>
       <h1>User List</h1>
-      <div>
-        <form onSubmit={setAuction}>
-          <h4>start time </h4>
-          <input
-            className="inputbox"
-            value={start_time}
-            onChange={(e) => setAuctionStartTime(e.target.value)}
-            type="time"
-            placeholder="Enter start time"
-          />
-          <br />
-          <h4>end time </h4>
-          <input
-            className="inputbox"
-            value={end_time}
-            onChange={(e) => setAuctionEndTime(e.target.value)}
-            type="time"
-            placeholder="Enter End time"
-          />
-          <br />
-          <h4>Date </h4>
-          <input
-            className="inputbox"
-            value={date}
-            onChange={(e) => setAuctionDate(e.target.value)}
-            type="date"
-            placeholder="Enter Auction Date"
-          />
-          <br />
-          <button type="submit" className="singupbtn">
-            set Time
-          </button>
-        </form>
-      </div>
+      {modal && (
+        <div className="modal-product">
+          <div className="HighestBider">
+            <h1>Highest Bider</h1>
+            <h4>First Name:-{highbider?.data?.firstname}</h4>
+            <h4>Last Name:-{highbider?.data?.lastname}</h4>
+            <h4>mobile No:-{highbider?.data?.mobile}</h4>
+          </div>
+
+          <div className="btn">
+            {" "}
+            <button onClick={close}>Done</button>{" "}
+          </div>
+        </div>
+      )}
+
       <br />
       <table>
         <thead>
@@ -109,6 +78,11 @@ const UserList = () => {
                       <li key={product.id}>
                         Name: {product.name}, Description: {product.description}
                         , Price: {product.price}
+                        <br />
+                        <button onClick={() => modalOpen(product.id)}>
+                          Highest Bidder
+                          {/* <Link to={"/allbidder/" + item.id}>All Bidder</Link> */}
+                        </button>
                       </li>
                     ))}
                   </ul>

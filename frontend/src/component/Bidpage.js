@@ -9,26 +9,32 @@ const BidProduct = () => {
   const [bidprice, setBidPrice] = useState(0);
   const [newbidprice, setNewBidPrice] = useState(0);
   const [description, setDescription] = useState("");
+  const [allBidder, setAllBidder] = useState("");
+  console.log("🚀 ~ file: Bidpage.js:13 ~ BidProduct ~ allBidder:", allBidder);
   const [image, setImage] = useState();
-  // const [fetchedPrice, setFetchedPrice] = useState(0);
-
   const params = useParams();
   const navigate = useNavigate();
 
   useEffect(() => {
     getproduct();
+    allbidder();
   }, []);
+
+  const allbidder = async () => {
+    let result = await axios.get(
+      `http://localhost:8000/allbidder/${params.id}`
+    );
+    console.log(result.data, "bWDwdf");
+    setAllBidder(result.data);
+  };
 
   const getproduct = async () => {
     let result = await axios.get(
       `http://localhost:8000/updateProduct/find/${params.id}`
     );
     // result = await result.json();
-    console.log("🚀 ~ file: Bidpage.js:25 ~ getproduct ~ result:", result);
-
     setName(result.data.name);
     setPrice(result.data.price);
-    // setFetchedPrice(result.data.price);
     setImage(`${BACKEND_PATH}/${result.data.image}`);
     setDescription(result.data.description);
     setNewBidPrice(result.data.bidprice);
@@ -44,7 +50,6 @@ const BidProduct = () => {
       alert("Please login to bid.");
       return;
     }
-    // console.log(" parseInt(sfasf.id):", parseInt(user.id));
 
     const bidderId = user.id;
     console.log(newbidprice, "fsfdsd");
@@ -52,30 +57,17 @@ const BidProduct = () => {
       `http://localhost:8000/updatebid/${params.id}`,
       {
         bidprice,
-        // method: "put",
-        // headers: {
-        //   "content-Type": "application/json",
-        // },
-        // body: JSON.stringify({ bidprice }),
       }
     );
-    // updatebid = await updatebid.json();
 
-    // console.log(updatebid, "update bid");
     let result = await axios.put(
       `http://localhost:8000/productbid/${params.id}`,
       {
-        // method: "put",
-        // body: JSON.stringify({ bidprice, bidderId }),
-        // headers: {
-        //   "content-Type": "application/json",
-        // },
         bidprice,
         bidderId,
       }
     );
-    // result = await result.json();
-    console.log(result, "kwhkagkag");
+
     navigate("/");
   };
 
@@ -120,6 +112,36 @@ const BidProduct = () => {
           "enter price gretter then BID-PRICE"
         )}
       </form>
+      <br />
+      <br />
+      <br />
+      <div>
+        <h2>Latest Bidder</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>First Name </th>
+              <th>Last Name</th>
+              <th>Bidded Price</th>
+            </tr>
+          </thead>
+          <tbody>
+            {allBidder.length > 0 ? (
+              <>
+                {allBidder.map((item, index) => (
+                  <tr>
+                    <td>{item.all.firstname}</td>
+                    <td>{item.all.lastname}</td>
+                    <td>{item.biddingPrice}</td>
+                  </tr>
+                ))}
+              </>
+            ) : (
+              ""
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };

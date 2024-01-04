@@ -29,30 +29,133 @@ exports.bidproduct = async (req, resp, next) => {
 
 //find the product bid price
 exports.productbidprice = async (req, resp, next) => {
-  const id = req.params.id;
-  let result = await prisma.bidder.findMany({
+  const id = parseInt(req.params.id);
+
+  let result = await prisma.bidder.findFirst({
     where: {
-      productId: parseInt(id),
+      productId: id,
+    },
+    orderBy: {
+      biddingPrice: "desc",
+    },
+    select: {
+      biddingPrice: true,
     },
   });
-  if (result && result.length > 0) {
-    // Extract an array of bidding prices
-    const biddingPrices = result.map((item) => item.biddingPrice);
+  console.log(
+    "🚀 ~ file: bidder.js:43 ~ exports.productbidprice= ~ result:",
+    result
+  );
+  // if (result && result.length > 0) {
+  //   // Extract an array of bidding prices
+  //   // const biddingPrices = result.map((item) => item.biddingPrice);
 
-    // Find the highest bidding price using reduce
-    const highestBid = biddingPrices.reduce(
-      (max, price) => (price > max ? price : max),
-      biddingPrices[0]
+  //   // // Find the highest bidding price using reduce
+  //   // const highestBid = biddingPrices.reduce(
+  //   //   (max, price) => (price > max ? price : max),
+  //   //   biddingPrices[0]
+  //   // );
+  //   // if (highestBid) {
+  //   //   resp.json({ st: "true", msg: "highest bid ", highestBid });
+  //   // } else {
+  //   //   resp.json({ st: "false", msg: " no highest bid found", highestBid: {} });
+  //   // }
+  // }
+};
+
+//get all user for a product
+exports.allbidder = async (req, resp, next) => {
+  const id = parseInt(req.params.id);
+  // console.log("hello", id);
+  try {
+    let product = await prisma.product.findFirst({
+      where: {
+        id,
+      },
+    });
+    console.log(
+      "🚀 ~ file: bidder.js:76 ~ exports.allbidder= ~ product:",
+      product
     );
-    if (highestBid) {
-      resp.json({ st: "true", msg: "highest bid ", highestBid });
-    } else {
-      resp.json({ st: "false", msg: " no highest bid found", highestBid: {} });
-    }
+
+    let results = await prisma.bidder.findMany({
+      where: {
+        productId: product.id,
+      },
+      // select: {
+      //   userId: true,
+      //   biddingPrice: true,
+      // },
+    });
+    console.log(
+      "🚀 ~ file: bidder.js:127 ~ exports.allbidder= ~ results:",
+      results
+    );
+    results.sort((a, b) => a.biddingPrice - b.biddingPrice);
+    const reversed = [...results].reverse();
+    const data = await Promise.all(
+      results.map(async (bidder) => {
+        let all = await prisma.user.findFirst({
+          where: {
+            id: bidder.userId,
+          },
+        });
+        return {
+          ...bidder,
+          all,
+        };
+      })
+    );
+    const reversedResults = [...data].reverse();
+
+    // console.log(" all:", data);
+    resp.json(reversedResults);
+    // if (results.length > 0) {
+    //   // const uniqueUserIds = [...new Set(results.map((item) => item.userId))];
+    //   // console.log(
+    //   //   "🚀 ~ file: bidder.js:97 ~ exports.allbidder= ~ uniqueUserIds:",
+    //   //   uniqueUserIds
+    //   // );
+
+    //   // let users = [];
+
+    //   // for (const userId of uniqueUserIds) {
+    //   //   const user = await prisma.user.findUnique({
+    //   //     where: {
+    //   //       id: userId,
+    //   //     },
+    //   //     select: {
+    //   //       firstname: true,
+    //   //       lastname: true,
+    //   //     },
+    //   //   });
+
+    //   //   if (user) {
+    //   //     users.push(user);
+    //   //   }
+    //   // }
+
+    //   // console.log(
+    //   //   "🚀 ~ file: bidder.js:121 ~ exports.allbidder= ~ reversedUsers:",
+    //   //   reversedUsers
+    //   // );
+    //   // const reversedResults = [...results].reverse();
+
+    //   // // Combine reversed arrays into a single array with reversed mapping
+    //   // const combinedArrayReversed = reversedUsers.map((user, index) => ({
+    //   //   user,
+    //   //   biddingPrice: reversedResults[index].biddingPrice,
+    //   // }));
+
+    // } else {
+    //   resp.json({ message: "No results found" });
+    // }
+  } catch (error) {
+    console.log(error);
+    resp.json(error);
   }
 };
 
-// finding the highest bidder
 exports.highestbidder = async (req, resp, next) => {
   const product = parseInt(req.params.id);
 
@@ -108,53 +211,62 @@ exports.highestbidder = async (req, resp, next) => {
   }
 };
 
-//get all user for a product
-exports.allbidder = async (req, resp, next) => {
-  const id = parseInt(req.params.id);
-  // console.log("hello", id);
-  try {
-    let product = await prisma.product.findFirst({
-      where: {
-        id,
-      },
-    });
+// finding the highest bidder
 
-    let results = await prisma.bidder.findMany({
-      where: {
-        productId: product.id,
-      },
-    });
+// exports.highestbidder = async (req, resp, next) => {
+//   try {
+//     const { name } = req.body;
+//     let findname = await prisma.product.findFirst({
+//       where: {
+//         name,
+//       },
+//     });
 
-    if (results.length > 0) {
-      const uniqueUserIds = [...new Set(results.map((item) => item.userId))];
+//     let result = await prisma.bidder.findMany({
+//       where: {
+//         productId: findname.id,
+//       },
+//     });
+//     console.log(" result:", result);
+//     // resp.json(results);
 
-      // console.log(uniqueUserIds);
+//     if (result && result.length > 0) {
+//       const biddingPrices = result.map((item) => item.biddingPrice);
 
-      let users = [];
+//       const highestBid = biddingPrices.reduce(
+//         (max, price) => (price > max ? price : max),
+//         biddingPrices[0]
+//       );
 
-      for (const userId of uniqueUserIds) {
-        const user = await prisma.user.findUnique({
-          where: {
-            id: userId,
-          },
-          select: {
-            firstname: true,
-            lastname: true,
-          },
-        });
-
-        if (user) {
-          users.push(user);
-        }
-      }
-
-      // console.log(users);
-      resp.json(users);
-    } else {
-      resp.json({ message: "No results found" });
-    }
-  } catch (error) {
-    console.log(error);
-    resp.json(error);
-  }
-};
+//       // resp.json({ highestBid: highestBid });
+//       let userid = await prisma.bidder.findFirst({
+//         where: {
+//           biddingPrice: highestBid,
+//         },
+//       });
+//       // console.log(
+//       //   "🚀 ~ file: bidder.js:58 ~ exports.highestbidder= ~ userid:",
+//       //   userid
+//       // );
+//       // resp.json({ userid });
+//       if (userid) {
+//         const userId = userid.userId;
+//         let info = await prisma.user.findFirst({
+//           where: {
+//             id: userId,
+//           },
+//         });
+//         resp.json(info);
+//         // console.log(
+//         //   "🚀 ~ file: bidder.js:67 ~ exports.highestbidder= ~ info:",
+//         //   info
+//         // );
+//       }
+//     } else {
+//       resp.json({ message: "No results found" });
+//     }
+//   } catch (error) {
+//     console.log(error);
+//     resp.json(error);
+//   }
+// };

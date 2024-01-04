@@ -25,15 +25,21 @@ model User {
 }
 
 model Product {
-  id          Int      @id @default(autoincrement())
-  name        String
-  description String
-  price       String   @db.VarChar(255)
-  image       String
-  User        User?    @relation(fields: [userId], references: [id])
-  userId      Int?
-  bidprice    String?
-  Bidder      Bidder[]
+  id               Int      @id @default(autoincrement())
+  name             String
+  description      String
+  price            String   @db.VarChar(255)
+  image            String
+  start_Time       String   @default("")
+  end_Time         String   @default("")
+  start_Date       String   @default("")
+  end_Date         String   @default("")
+  User             User?    @relation(fields: [userId], references: [id])
+  userId           Int?
+  bidprice         String?
+  Bidder           Bidder[]
+  isAuctionStarted Boolean? @default(false)
+  isCompleted      Boolean? @default(false)
 }
 
 model Bidder {

@@ -7,6 +7,43 @@ const path = require("path");
 const { stringify } = require("querystring");
 const prisma = new PrismaClient();
 
+function startTimer(start_Time, start_Date, end_Time, end_Date, productId) {
+  const currentDate = new Date();
+  console.log("currentDate:", currentDate);
+  const startDate = new Date(`${start_Date}T${start_Time}`);
+  const endDate = new Date(`${end_Date}T${end_Time}`);
+  console.log(" startDate:", startDate);
+  console.log("endDate:", endDate);
+
+  // let timeDifference = startDate - currentDate; //minisec
+
+  let timeDifference = startDate - currentDate + 1000; //minisec
+
+  const timer = setTimeout(async () => {
+    const duration = endDate - currentDate;
+
+    // console.log("🚀 ~ file: auction.js:32 ~ timer ~ duration:", duration);
+
+    setTimeout(async () => {
+      clearTimeout(timer);
+      const result = await prisma.product.update({
+        where: {
+          id: productId,
+        },
+        data: { isCompleted: true },
+      });
+    }, duration);
+
+    const result = await prisma.product.update({
+      where: {
+        id: productId,
+      },
+
+      data: { isAuctionStarted: true },
+    });
+  }, timeDifference);
+}
+
 exports.addProduct = async (req, res, next) => {
   if (!req.file) {
     return res.status(400).send("No files were uploaded.");
@@ -14,9 +51,27 @@ exports.addProduct = async (req, res, next) => {
   const image = req.file.filename;
 
   try {
-    const { id, name, price, description } = req.body;
+    const {
+      id,
+      name,
+      price,
+      description,
+      start_Date,
+      start_Time,
+      end_Date,
+      end_Time,
+    } = req.body;
 
-    console.log(name, image, price, description, typeof id);
+    console.log(
+      name,
+      image,
+      price,
+      description,
+      start_Date,
+      start_Time,
+      end_Date,
+      end_Time
+    );
 
     const addProduct = await prisma.product.create({
       data: {
@@ -24,11 +79,21 @@ exports.addProduct = async (req, res, next) => {
         image,
         price,
         description,
+        start_Date,
+        start_Time,
+        end_Date,
+        end_Time,
         userId: parseInt(id),
       },
     });
+    // console.log(
+    //   "🚀 ~ file: poducts.js:52 ~ exports.addProduct= ~ addProduct:",
+    //   addProduct
+    // );
 
     if (addProduct) {
+      const productId = addProduct.id;
+      startTimer(start_Time, start_Date, end_Time, end_Date, productId);
       res.json({ data: addProduct, msg: "File uploaded successfully" });
     } else {
       res.json({ data: {}, msg: "File uploaded unsuccessfully" });
@@ -42,7 +107,27 @@ exports.productList = async (req, resp, next) => {
   try {
     const products = await prisma.product.findMany();
     // console.log(products, "dfsfdsf"); // Assuming your model is 'Product'
-    resp.json(products);
+    const data = await Promise.all(
+      products.map(async (products) => {
+        const bidder = await prisma.bidder.findMany({
+          where: {
+            productId: products.id,
+          },
+          // select: {
+          //   name: true,
+          //   price: true,
+          // },
+        });
+
+        return {
+          // ...user,
+          ...products,
+          bidder,
+          // bidder,
+        };
+      })
+    );
+    resp.json(data);
   } catch (error) {
     console.log(error);
   }
@@ -238,7 +323,7 @@ exports.updatebid = async (req, resp, next) => {
   // const { id } = req.params;
   try {
     const { bidprice } = req.body;
-    console.log("🚀 ~ ", bidprice);
+    // console.log("🚀 ~ ", bidprice);
     const { id } = req.params;
     const updatebid = await prisma.product.update({
       where: {
