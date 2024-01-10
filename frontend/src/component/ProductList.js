@@ -6,10 +6,7 @@ import { Link } from "react-router-dom";
 
 const ProductList = () => {
   const [products, setProducts] = useState("");
-  // console.log(
-  //   "🚀 ~ file: ProductList.js:9 ~ ProductList ~ products:",
-  //   products
-  // );
+
   const [liveOpen, setLiveOpen] = useState(true);
   const [ucOpen, setUcOpen] = useState(false);
   const [FilterProducts, setFilterProducts] = useState([]);
@@ -22,64 +19,8 @@ const ProductList = () => {
       (ele) => ele.isAuctionStarted === true
     );
     setFilterLive(filteredupcoming);
-    // if (result.data) {
-    //   startTimer(
-    //     result.data.start_Time,
-    //     result.data.start_Date,
-    //     result.data.end_Date,
-    //     result.data.end_Time
-    //   );
-    // }
   };
   const currentDate = new Date();
-
-  // function startTimer(start_Time, start_Date, end_Date, end_Time) {
-  //   const currentDate = new Date();
-  //   const startDateTime = new Date(`${start_Date}T${start_Time}`);
-  //   const endDateTime = new Date(`${end_Date}T${end_Time}`);
-
-  //   if (currentDate >= startDateTime && currentDate <= endDateTime) {
-  //     const count = endDateTime - currentDate;
-  //     console.log("🚀 ~ file: ProductList.js:31 ~ startTimer ~ count:", count);
-  //     setReverseTime(Math.floor(count));
-  //   } else {
-  //     setReverseTime(0); // Set countdown to 0 if outside the countdown window
-  //   }
-  // }
-
-  // const handleCountDown = (end_Date, start_Date, end_Time, start_Time) => {
-  //   const endDateTime = new Date(`${end_Date}T${end_Time}`);
-  //   const startDateTime = new Date(`${start_Date}T${start_Time}`);
-  //   const currentTime = new Date(); // Current time
-  //   const timeRemaining = endDateTime - startDateTime;
-
-  //   if (timeRemaining > 0) {
-  //     const countdownInterval = setInterval(() => {
-  //       const time = endDateTime - startDateTime; // Recalculate remaining time
-  //       console.log(" timeRemaining:", timeRemaining);
-  //       const hours = Math.floor(
-  //         (time % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-  //       );
-  //       const minutes = Math.floor((time % (1000 * 60 * 60)) / (1000 * 60));
-  //       const seconds = Math.floor((time % (1000 * 60)) / 1000);
-
-  //       if (timeRemaining > 0) {
-  //         setCountdown(
-  //           `${hours} hours ${minutes} minutes ${seconds} seconds remaining`
-  //         );
-  //         // Update countdown state with remaining time
-  //         // Update UI or perform actions based on the countdown
-  //       } else {
-  //         // console.log("Countdown ended");
-  //         setCountdown("Countdown ended");
-  //         clearInterval(countdownInterval); // Stop the interval when countdown ends
-  //         // Perform actions when countdown ends
-  //       }
-  //     }, 1000); // Update every second
-  //   } else {
-  //     console.log("Countdown has already ended");
-  //   }
-  // };
 
   const reversetime = (start_Time, start_Date, end_Time, end_Date) => {
     const startDateTime = new Date(`${start_Date}T${start_Time}`);
@@ -244,7 +185,7 @@ const ProductList = () => {
               ))}
             </ul>
           ) : (
-            <h1>No Result Found?????</h1>
+            <h1>There are no live Auction</h1>
           )}
         </>
       ) : (
@@ -327,7 +268,7 @@ const ProductList = () => {
               ))}
             </ul>
           ) : (
-            <h1>No Result Found!!!!</h1>
+            <h1>There are no up coming Auction</h1>
           )}
         </>
       ) : (
@@ -338,3 +279,51 @@ const ProductList = () => {
 };
 
 export default ProductList;
+
+// function startTimer(start_Time, start_Date, end_Date, end_Time) {
+//   const currentDate = new Date();
+//   const startDateTime = new Date(`${start_Date}T${start_Time}`);
+//   const endDateTime = new Date(`${end_Date}T${end_Time}`);
+
+//   if (currentDate >= startDateTime && currentDate <= endDateTime) {
+//     const count = endDateTime - currentDate;
+//     console.log("🚀 ~ file: ProductList.js:31 ~ startTimer ~ count:", count);
+//     setReverseTime(Math.floor(count));
+//   } else {
+//     setReverseTime(0); // Set countdown to 0 if outside the countdown window
+//   }
+// }
+
+// const handleCountDown = (end_Date, start_Date, end_Time, start_Time) => {
+//   const endDateTime = new Date(`${end_Date}T${end_Time}`);
+//   const startDateTime = new Date(`${start_Date}T${start_Time}`);
+//   const currentTime = new Date(); // Current time
+//   const timeRemaining = endDateTime - startDateTime;
+
+//   if (timeRemaining > 0) {
+//     const countdownInterval = setInterval(() => {
+//       const time = endDateTime - startDateTime; // Recalculate remaining time
+//       console.log(" timeRemaining:", timeRemaining);
+//       const hours = Math.floor(
+//         (time % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+//       );
+//       const minutes = Math.floor((time % (1000 * 60 * 60)) / (1000 * 60));
+//       const seconds = Math.floor((time % (1000 * 60)) / 1000);
+
+//       if (timeRemaining > 0) {
+//         setCountdown(
+//           `${hours} hours ${minutes} minutes ${seconds} seconds remaining`
+//         );
+//         // Update countdown state with remaining time
+//         // Update UI or perform actions based on the countdown
+//       } else {
+//         // console.log("Countdown ended");
+//         setCountdown("Countdown ended");
+//         clearInterval(countdownInterval); // Stop the interval when countdown ends
+//         // Perform actions when countdown ends
+//       }
+//     }, 1000); // Update every second
+//   } else {
+//     console.log("Countdown has already ended");
+//   }
+// };

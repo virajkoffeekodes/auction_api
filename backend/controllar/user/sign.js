@@ -8,7 +8,7 @@ const cookieToken = require("../../cookieToken/cookieToken");
 // user signup
 exports.signup = async (req, resp, next) => {
   try {
-    const { firstname, lastname, mobile, password, confirm_password } =
+    const { firstname, lastname, mobile, password, confirm_password, email } =
       req.body.data;
 
     const user = await prisma.user.create({
@@ -17,6 +17,7 @@ exports.signup = async (req, resp, next) => {
         lastname,
         mobile,
         password,
+        email,
         isAdmin: false,
       },
     });
@@ -33,7 +34,7 @@ exports.signup = async (req, resp, next) => {
 
 //userlogin
 exports.login = async (req, resp, next) => {
-  const { mobile } = req.body.values;
+  const { email, password } = req.body.data;
   // console.log(
   //   "🚀 ~ file: sign.js:39 ~ exports.login= ~ mobile:",
   //   mobile.toString()
@@ -42,7 +43,8 @@ exports.login = async (req, resp, next) => {
   try {
     const isUser = await prisma.user.findFirst({
       where: {
-        mobile: mobile.toString(),
+        email,
+        password,
       },
     });
     if (isUser) {

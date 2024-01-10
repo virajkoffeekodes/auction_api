@@ -8,6 +8,7 @@ const initialValues = {
   firstname: "",
   lastname: "",
   mobile: "",
+  email: "",
   password: "",
   confirm_password: "",
 };
@@ -16,6 +17,9 @@ const signUpSchema = Yup.object({
   firstname: Yup.string().min(3).max(15).required("plz enter your firstname"),
   lastname: Yup.string().min(3).max(15).required("plz enter your lastname"),
   mobile: Yup.string().min(10).max(10).required("plz enter your mobile number"),
+  email: Yup.string()
+    .email("Invalid email format")
+    .required("plz enter your Email"),
   password: Yup.string().min(6).max(8).required("plz enter your password"),
   confirm_password: Yup.string()
     .required("plz enter your confirm_password")
@@ -34,6 +38,7 @@ const Signup = () => {
           firstname: values.firstname,
           lastname: values.lastname,
           mobile: values.mobile.toString(),
+          email: values.email,
           password: values.password,
           confirm_password: values.confirm_password.toString(),
         };
@@ -104,6 +109,19 @@ const Signup = () => {
           placeholder="lastname"
         />
         {errors.lastname && touched.lastname ? <p>{errors.lastname}</p> : null}
+        <br />
+        <input
+          className="inputbox"
+          name="email"
+          value={values.email}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          // value={lastname}
+          // onChange={(e) => setLastname(e.target.value)}
+          type="email"
+          placeholder="email"
+        />
+        {errors.email && touched.email ? <p>{errors.email}</p> : null}
         <br />
         <input
           className="inputbox"

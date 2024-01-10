@@ -73,10 +73,6 @@ exports.allbidder = async (req, resp, next) => {
         id,
       },
     });
-    console.log(
-      "🚀 ~ file: bidder.js:76 ~ exports.allbidder= ~ product:",
-      product
-    );
 
     let results = await prisma.bidder.findMany({
       where: {
@@ -156,6 +152,7 @@ exports.allbidder = async (req, resp, next) => {
   }
 };
 
+//finding the highest bidder
 exports.highestbidder = async (req, resp, next) => {
   const product = parseInt(req.params.id);
 
@@ -208,6 +205,35 @@ exports.highestbidder = async (req, resp, next) => {
   } catch (error) {
     console.log(error);
     resp.json(error);
+  }
+};
+
+//sending the mail to highest bidder
+exports.email = async (req, resp, next) => {
+  let productid = await prisma.product.findMany();
+
+  if (productid && productid.length > 0) {
+    const completed = productid.filter((item) => item.isCompleted);
+
+    if (true) {
+      const completedid = completed.map((item) => item.id);
+      let result = await prisma.bidder.findMany({
+        where: {
+          productId: {
+            in: completedid, // Assuming completedid is an array of IDs
+          },
+        },
+      });
+      const productbids = result.map((item) => item.productId);
+
+      for (let id in productbids) {
+        console.log(productbids[id]);
+      }
+    } else {
+      console.log("error");
+    }
+  } else {
+    resp.json({ message: "No results found" });
   }
 };
 

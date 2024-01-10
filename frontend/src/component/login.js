@@ -5,12 +5,14 @@ import * as Yup from "yup";
 import axios from "axios";
 
 const initialValues = {
-  mobile: "",
+  email: "",
   password: "",
 };
 
 const loginSchema = Yup.object({
-  mobile: Yup.string().min(10).max(10).required("plz enter your mobile number"),
+  email: Yup.string()
+    .email("Invalid email format")
+    .required("plz enter your Email"),
   password: Yup.string().min(6).max(8).required("plz enter your password"),
 });
 
@@ -23,6 +25,10 @@ const Login = () => {
       validationSchema: loginSchema,
       onSubmit: async (values) => {
         console.log(values);
+        const data = {
+          email: values.email,
+          password: values.password,
+        };
 
         const headers = {
           "Content-Type": "application/json",
@@ -30,7 +36,7 @@ const Login = () => {
 
         let result = await axios.post(
           "http://localhost:8000/login",
-          { values: { mobile: values.mobile } },
+          { data },
           {
             headers,
           }
@@ -59,7 +65,7 @@ const Login = () => {
             window.location.reload();
           }
         } else {
-          alert("something goes wrong");
+          alert("invalid email or password");
         }
       },
     });
@@ -113,16 +119,16 @@ const Login = () => {
       <h1>Login Page</h1>
       <input
         className="inputbox"
-        name="mobile"
-        value={values.mobile}
+        name="email"
+        value={values.email}
         onChange={handleChange}
         onBlur={handleBlur}
-        // value={mobile}
-        // onChange={(e) => setMobile(e.target.value)}
-        type="number"
-        placeholder="Enter mobile"
+        // value={lastname}
+        // onChange={(e) => setLastname(e.target.value)}
+        type="email"
+        placeholder="email"
       />
-      {errors.mobile && touched.mobile ? <p>{errors.mobile}</p> : null}
+      {errors.email && touched.email ? <p>{errors.email}</p> : null}
 
       <br />
       <input

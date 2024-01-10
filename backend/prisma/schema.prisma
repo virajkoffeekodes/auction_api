@@ -15,6 +15,7 @@ model User {
   firstname    String
   lastname     String
   mobile       String
+  email        String?        @unique
   password     String
   isAdmin      Boolean        @default(false)
   produts      Product[]
