@@ -31,7 +31,7 @@ const Navbar = () => {
               <Link to="/userlist">user list</Link>
             </li>
             <li>
-              <Link to={"/signup"} onClick={logout}>
+              <Link to={"/login"} onClick={logout}>
                 logout
               </Link>
             </li>

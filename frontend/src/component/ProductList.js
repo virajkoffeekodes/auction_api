@@ -108,7 +108,6 @@ const ProductList = () => {
       <br />
       <button onClick={handleFilterLive}>Live</button>
       <button onClick={handleFilter}>Upcoming</button>
-
       {liveOpen ? (
         <>
           {FilterLive?.length > 0 ? (
@@ -191,7 +190,6 @@ const ProductList = () => {
       ) : (
         ""
       )}
-
       {ucOpen ? (
         <>
           {FilterProducts?.length > 0 ? (

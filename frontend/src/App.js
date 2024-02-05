@@ -16,6 +16,7 @@ import Bidderinfo from "./component/Bidderinfo";
 import Paymentpage from "./component/paymentpage";
 
 function App() {
+  console.log(ProductList);
   return (
     <div>
       <BrowserRouter>

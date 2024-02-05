@@ -42,6 +42,7 @@ const Signup = () => {
           password: values.password,
           confirm_password: values.confirm_password.toString(),
         };
+        console.log("🚀 ~ Signup ~ values:", values);
         console.log(data);
         let result = await axios.post("http://localhost:8000/signup", { data });
 
